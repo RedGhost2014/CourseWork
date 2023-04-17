@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Исходные файлы">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Файлы ресурсов">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Исходные файлы\File">
+      <UniqueIdentifier>{d034763f-0eb2-4582-96f8-13bfeacd3522}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Utils">
+      <UniqueIdentifier>{42c61dde-0409-4f0d-beb1-6ee55ac59c01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Settings">
+      <UniqueIdentifier>{ed86f86d-cd33-4b08-b23b-bb956cc464f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Tokenizer">
+      <UniqueIdentifier>{99c24dc4-f6f0-49a0-83a7-368d90a2461f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\AST">
+      <UniqueIdentifier>{44c839e0-2a53-49c9-808b-fcf80d3ccf79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Log">
+      <UniqueIdentifier>{e06417b1-4e0e-4b57-9ae8-675bf948d284}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\SemanticTree">
+      <UniqueIdentifier>{d6116c16-8799-4ee6-bb88-7521705966a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\MetaInfo">
+      <UniqueIdentifier>{821bfab9-e521-4b55-9d0c-e7c6e651ea77}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="File.hpp">
+      <Filter>Исходные файлы\File</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.hpp">
+      <Filter>Исходные файлы\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings.hpp">
+      <Filter>Исходные файлы\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Tokenizer.hpp">
+      <Filter>Исходные файлы\Tokenizer</Filter>
+    </ClInclude>
+    <ClInclude Include="ALT.hpp">
+      <Filter>Исходные файлы\AST</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.hpp">
+      <Filter>Исходные файлы\Log</Filter>
+    </ClInclude>
+    <ClInclude Include="AST.hpp">
+      <Filter>Исходные файлы\SemanticTree</Filter>
+    </ClInclude>
+    <ClInclude Include="MetaInfo.hpp">
+      <Filter>Исходные файлы\MetaInfo</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="File.cpp">
+      <Filter>Исходные файлы\File</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Исходные файлы\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings.cpp">
+      <Filter>Исходные файлы\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Tokenizer.cpp">
+      <Filter>Исходные файлы\Tokenizer</Filter>
+    </ClCompile>
+    <ClCompile Include="ALT.cpp">
+      <Filter>Исходные файлы\AST</Filter>
+    </ClCompile>
+    <ClCompile Include="Log.cpp">
+      <Filter>Исходные файлы\Log</Filter>
+    </ClCompile>
+    <ClCompile Include="AST.cpp">
+      <Filter>Исходные файлы\SemanticTree</Filter>
+    </ClCompile>
+    <ClCompile Include="MetaInfo.cpp">
+      <Filter>Исходные файлы\MetaInfo</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

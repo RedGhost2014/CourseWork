@@ -1,0 +1,17 @@
+
+
+-------------------
+
+Total Errors: 1
+
+1) <somecode.c>: (2): 	Missed close figure bracket.
+
+
+-------------------
+
+Total Warnings: 0
+
+
+
+-------------------
+
