@@ -49,118 +49,155 @@
 15  |		;	   <End line>
 16  |	}	   <Operator>
 18  |	int	   <Keyword>
-18  |	main	   <Identifier>
+18  |	operator	   <Keyword>
+18  |	~	   <Operator>
 18  |	(	   <Operator>
-18  |		char	   <Keyword>
-18  |		*	   <Operator>
-18  |		arg	   <Identifier>
+18  |		int	   <Keyword>
+18  |		rhs	   <Identifier>
 18  |	)	   <Operator>
 19  |	{	   <Operator>
-20  |		int	   <Keyword>
-20  |		a	   <Identifier>
-20  |		=	   <Operator>
-20  |		123	   <Number>
+20  |		return	   <Keyword>
+20  |		rhs	   <Identifier>
+20  |		-	   <Operator>
+20  |		3	   <Number>
 20  |		;	   <End line>
-21  |		int	   <Keyword>
-21  |		*	   <Operator>
-21  |		b	   <Identifier>
-21  |		=	   <Operator>
-21  |		&	   <Operator>
-21  |		a	   <Identifier>
-21  |		;	   <End line>
-22  |		b	   <Identifier>
-22  |		[	   <Operator>
-22  |			5	   <Number>
-22  |		]	   <Operator>
-22  |		=	   <Operator>
-22  |		0	   <Number>
-22  |		x1337	   <Identifier>
-22  |		;	   <End line>
-25  |		for	   <Keyword>
-25  |		(	   <Operator>
-25  |			size_t	   <Identifier>
-25  |			i	   <Identifier>
-25  |			=	   <Operator>
-25  |			0	   <Number>
-25  |			;	   <End line>
-25  |			i	   <Identifier>
-25  |			<	   <Operator>
-25  |			15	   <Number>
-25  |			;	   <End line>
-25  |			i	   <Identifier>
-25  |			+	   <Operator>
-25  |			+	   <Operator>
-25  |		)	   <Operator>
-26  |		{	   <Operator>
-27  |			printf	   <Identifier>
-27  |			(	   <Operator>
-27  |				"%d"	   <String Literal>
-27  |				,	   <Operator>
-27  |				i	   <Identifier>
-27  |			)	   <Operator>
-27  |			;	   <End line>
-28  |			if	   <Keyword>
-28  |			(	   <Operator>
-28  |				i	   <Identifier>
-28  |				=	   <Operator>
-28  |				=	   <Operator>
-28  |				5	   <Number>
-28  |			)	   <Operator>
-29  |			break	   <Keyword>
-29  |			;	   <End line>
-30  |		}	   <Operator>
-31  |		b	   <Identifier>
-31  |		=	   <Operator>
-31  |		1	   <Number>
-31  |		aasd	   <Identifier>
-31  |		;	   <End line>
-33  |		z	   <Identifier>
-33  |		=	   <Operator>
-33  |		0	   <Number>
-33  |		b110	   <Identifier>
-33  |		.	   <Operator>
-33  |		123	   <Number>
-33  |		;	   <End line>
-35  |		s	   <Identifier>
-35  |		=	   <Operator>
-35  |		sizeof	   <Keyword>
-35  |		(	   <Operator>
-35  |			5	   <Number>
-35  |		)	   <Operator>
-35  |		;	   <End line>
-37  |		char	   <Keyword>
-37  |		c	   <Identifier>
-37  |		=	   <Operator>
-37  |		'c'	   <Character Literal>
-37  |		;	   <End line>
-38  |		double	   <Keyword>
-38  |		x	   <Identifier>
-38  |		=	   <Operator>
-38  |		123.123	   <Number>
-38  |		;	   <End line>
-39  |		const	   <Identifier>
-39  |		char	   <Keyword>
-39  |		*	   <Operator>
-39  |		str	   <Identifier>
-39  |		=	   <Operator>
-39  |		"Hello \\\" world"	   <String Literal>
-39  |		;	   <End line>
-40  |		f	   <Identifier>
-40  |		(	   <Operator>
-40  |			5	   <Number>
-40  |		)	   <Operator>
-40  |		;	   <End line>
-41  |		{	   <Operator>
-42  |			int	   <Keyword>
-42  |			a1	   <Identifier>
-42  |			=	   <Operator>
-42  |			5	   <Number>
+21  |	}	   <Operator>
+23  |	int	   <Keyword>
+23  |	main	   <Identifier>
+23  |	(	   <Operator>
+23  |		char	   <Keyword>
+23  |		*	   <Operator>
+23  |		arg	   <Identifier>
+23  |	)	   <Operator>
+24  |	{	   <Operator>
+25  |		int	   <Keyword>
+25  |		a	   <Identifier>
+25  |		=	   <Operator>
+25  |		123	   <Number>
+25  |		;	   <End line>
+26  |		int	   <Keyword>
+26  |		*	   <Operator>
+26  |		b	   <Identifier>
+26  |		=	   <Operator>
+26  |		&	   <Operator>
+26  |		a	   <Identifier>
+26  |		;	   <End line>
+27  |		b	   <Identifier>
+27  |		[	   <Operator>
+27  |			5	   <Number>
+27  |		]	   <Operator>
+27  |		=	   <Operator>
+27  |		0	   <Number>
+27  |		x1337	   <Identifier>
+27  |		;	   <End line>
+29  |		if	   <Keyword>
+29  |		(	   <Operator>
+29  |			a	   <Identifier>
+29  |			=	   <Operator>
+29  |			=	   <Operator>
+29  |			5	   <Number>
+29  |		)	   <Operator>
+30  |		{	   <Operator>
+31  |			printf	   <Identifier>
+31  |			(	   <Operator>
+31  |				"Somestring"	   <String Literal>
+31  |			)	   <Operator>
+31  |			;	   <End line>
+32  |		}	   <Operator>
+33  |		else	   <Keyword>
+33  |		if	   <Keyword>
+33  |		(	   <Operator>
+33  |			a	   <Identifier>
+33  |			=	   <Operator>
+33  |			=	   <Operator>
+33  |			6	   <Number>
+33  |		)	   <Operator>
+34  |		{	   <Operator>
+35  |			printf	   <Identifier>
+35  |			(	   <Operator>
+35  |				"Another Somestring"	   <String Literal>
+35  |			)	   <Operator>
+35  |			;	   <End line>
+36  |		}	   <Operator>
+38  |		for	   <Keyword>
+38  |		(	   <Operator>
+38  |			size_t	   <Identifier>
+38  |			i	   <Identifier>
+38  |			=	   <Operator>
+38  |			0	   <Number>
+38  |			;	   <End line>
+38  |			i	   <Identifier>
+38  |			<	   <Operator>
+38  |			15	   <Number>
+38  |			;	   <End line>
+38  |			i	   <Identifier>
+38  |			+	   <Operator>
+38  |			+	   <Operator>
+38  |		)	   <Operator>
+39  |		{	   <Operator>
+40  |			printf	   <Identifier>
+40  |			(	   <Operator>
+40  |				"%d"	   <String Literal>
+40  |				,	   <Operator>
+40  |				i	   <Identifier>
+40  |			)	   <Operator>
+40  |			;	   <End line>
+41  |			if	   <Keyword>
+41  |			(	   <Operator>
+41  |				i	   <Identifier>
+41  |				=	   <Operator>
+41  |				=	   <Operator>
+41  |				5	   <Number>
+41  |			)	   <Operator>
+42  |			break	   <Keyword>
 42  |			;	   <End line>
 43  |		}	   <Operator>
-44  |		return	   <Keyword>
-44  |		0	   <Number>
-44  |		;	   <End line>
-45  |	}	   <Operator>
+45  |		s	   <Identifier>
+45  |		=	   <Operator>
+45  |		sizeof	   <Keyword>
+45  |		(	   <Operator>
+45  |			5	   <Number>
+45  |		)	   <Operator>
+45  |		;	   <End line>
+47  |		Type	   <Identifier>
+47  |		*	   <Operator>
+47  |		t	   <Identifier>
+47  |		=	   <Operator>
+47  |		nullptr	   <Identifier>
+47  |		;	   <End line>
+49  |		char	   <Keyword>
+49  |		c	   <Identifier>
+49  |		=	   <Operator>
+49  |		'c'	   <Character Literal>
+49  |		;	   <End line>
+50  |		double	   <Keyword>
+50  |		x	   <Identifier>
+50  |		=	   <Operator>
+50  |		123.123	   <Number>
+50  |		;	   <End line>
+51  |		const	   <Identifier>
+51  |		char	   <Keyword>
+51  |		*	   <Operator>
+51  |		str	   <Identifier>
+51  |		=	   <Operator>
+51  |		"Hello \\\" world"	   <String Literal>
+51  |		;	   <End line>
+52  |		f	   <Identifier>
+52  |		(	   <Operator>
+52  |			5	   <Number>
+52  |		)	   <Operator>
+52  |		;	   <End line>
+53  |		{	   <Operator>
+54  |			int	   <Keyword>
+54  |			a1	   <Identifier>
+54  |			=	   <Operator>
+54  |			5	   <Number>
+54  |			;	   <End line>
+55  |		}	   <Operator>
+56  |		return	   <Keyword>
+56  |		0	   <Number>
+56  |		;	   <End line>
+57  |	}	   <Operator>
 0  |somecode.c	   <Source file>
 1  |	int	   <Keyword>
 1  |	f	   <Identifier>

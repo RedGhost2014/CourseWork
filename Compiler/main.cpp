@@ -32,6 +32,7 @@ int main(int argc, char* argv[])
 	{
 		L"Compiler.exe",
 		L"test.c",
+		//L"Hello World.i",
 		L"somecode.c",
 		L"--astrace",
 	};
