@@ -6,6 +6,7 @@ public:
 	CategoryDeterminer() = default;
 
 	bool isDeclarator(vector<LexicalUnit*>& lexicrow);
+	bool isKeyword(LexicalUnit*);
 };
 
 bool CategoryDeterminer::isDeclarator(vector<LexicalUnit*>& lexicrow)
@@ -23,31 +24,38 @@ bool CategoryDeterminer::isDeclarator(vector<LexicalUnit*>& lexicrow)
 	return false;
 }
 
+bool CategoryDeterminer::isKeyword(LexicalUnit* unit)
+{
+	return unit->getKey() == L"Keyword";
+}
+
 void AbstractSyntaxTree::bypassLexicTree(LexicalUnit* head)
 {
 	vector<LexicalUnit*> parserow;
 
 	vector<LexicalUnit*>& currentLexicalRow = head->getTree();
 
-	//int f();
-	//f();
-
 	size_t i = 0;
-	bool isDetermine = false;
 	while (i < currentLexicalRow.size())
 	{
 		wstring tmp = currentLexicalRow[i]->getValue();
 		parserow.push_back(currentLexicalRow[i]);
-		if (tmp == L"{" || tmp == L";")
+		if (tmp == L"{")
 		{
-			isDetermine = true;
+			//isDetermine = true;
+			printLexicRow(parserow);
+			determineCategory(parserow);
+			parserow.clear();
+		}
+		if (tmp == L";")
+		{
 			printLexicRow(parserow);
 			determineCategory(parserow);
 			parserow.clear();
 		}
 		i++;
 	}
-	if (!isDetermine)
+	if (!parserow.empty())
 	{
 		printLexicRow(parserow);
 		determineCategory(parserow);
@@ -76,9 +84,8 @@ void AbstractSyntaxTree::determineCategory(vector<LexicalUnit*>& lexicrow)
 {
 	static CategoryDeterminer cd;
 
-	adjustTypes(lexicrow);
 
-	if (cd.isDeclarator(lexicrow))
+	if (cd.isKeyword(lexicrow[0]))
 	{
 
 	}

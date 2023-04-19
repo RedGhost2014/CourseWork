@@ -15,12 +15,25 @@ namespace asd
 	size_t x = 5;
 }
 
+int operator~(int rhs)
+{
+	return rhs - 3;
+}
+
 int main(char* arg)
 {
 	int a = 123;
 	int* b = &a;
 	b[5] = 0x1337;
 
+	if (a == 5)
+	{
+		printf("Somestring");
+	}
+	else if (a == 6)
+	{
+		printf("Another Somestring");
+	}
 
 	for (size_t i = 0; i < 15; i++)
 	{
@@ -28,11 +41,10 @@ int main(char* arg)
 		if (i == 5)
 			break;
 	}
-	b = 1aasd;
-
-	z = 0b110.123;
 
 	s = sizeof(5);
+
+	Type* t = nullptr;
 
 	char c = 'c';
 	double x = 123.123;

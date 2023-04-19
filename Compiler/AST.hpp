@@ -29,6 +29,7 @@ class SyntaxUnit
 public:
 	SyntaxUnit() = default;
 	~SyntaxUnit() = default;
+	virtual wstring getSyntaxType();
 
 protected:
 	wstring type;
