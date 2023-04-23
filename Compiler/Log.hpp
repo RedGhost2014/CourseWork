@@ -16,3 +16,16 @@ public:
 	static void print(wstring);
 };
 
+class ErrorMessage
+{
+public:
+
+	static wstring syntaxError;
+
+	static wstring bracket_Open_Round_Missed;
+	static wstring bracket_Close_Round_Missed;
+	static wstring bracket_Open_Figure_Missed;
+	static wstring bracket_Close_Figure_Missed;
+	static wstring bracket_Open_Square_Missed;
+	static wstring bracket_Close_Square_Missed;
+};

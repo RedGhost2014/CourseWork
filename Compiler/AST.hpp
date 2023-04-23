@@ -12,14 +12,15 @@ class AbstractSyntaxTree
 public:
 	AbstractSyntaxTree() = default;
 	~AbstractSyntaxTree() = default;
-
-	void bypassLexicTree(LexicalUnit* head);
-	void consumeLexicTree(AbstractLexicTree* alt);
-	void printLexicRow(vector<LexicalUnit*>& lexicrow);
+//
+//	void bypassLexicTree(LexicalUnit* head);
+//	void consumeLexicTree(AbstractLexicTree* alt);
+//	void printLexicRow(vector<LexicalUnit*>& lexicrow);
+//private:
+//	void determineCategory(vector<LexicalUnit*>& lexicrow);
+//	void adjustTypes(vector<LexicalUnit*>& lexicrow);
+//	
 private:
-	void determineCategory(vector<LexicalUnit*>& lexicrow);
-	void adjustTypes(vector<LexicalUnit*>& lexicrow);
-
 	SyntaxUnit* head;
 };
 

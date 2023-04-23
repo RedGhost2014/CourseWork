@@ -152,10 +152,11 @@
     <ClCompile Include="File.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="AST.cpp" />
     <ClCompile Include="MetaInfo.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="ALT.cpp" />
+    <ClCompile Include="SyntaxAnalyzer.cpp" />
+    <ClCompile Include="SyntaxAnalyzer.hpp" />
     <ClCompile Include="Tokenizer.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>

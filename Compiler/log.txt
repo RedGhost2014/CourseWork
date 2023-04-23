@@ -2,15 +2,20 @@
 
 -------------------
 
-Total Errors: 1
+Total Errors: 2
 
-1) <somecode.c>: (2): 	Missed close figure bracket.
+1) <somecode.c>: (2): 	Syntax Error: Missed close figure bracket.
+2) <test.c>: (9): 	Unresolved type declaration: '{' or ';' expected.
 
 
 -------------------
 
-Total Warnings: 0
+Total Warnings: 4
 
+1) <test.c>: (7): 	Missed symbol: ';' missed but emplaced by --fixit.
+2) <test.c>: (11): 	Missed symbol: ';' missed but emplaced by --fixit.
+3) <test.c>: (13): 	Missed symbol: ';' missed but emplaced by --fixit.
+4) <test.c>: (15): 	Missed symbol: ';' missed but emplaced by --fixit.
 
 
 -------------------
