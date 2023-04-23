@@ -6,6 +6,7 @@
 #include "AST.hpp"
 #include "Log.hpp"
 #include "MetaInfo.hpp"
+#include "SyntaxAnalyzer.hpp"
 
 wchar_t* GetWC(const char* c)
 {
@@ -26,7 +27,9 @@ int main(int argc, char* argv[])
 	SetConsoleCP(1251);
 	_wsetlocale(LC_ALL, L"Rus");
 
-	// "--astrace" - ¬ывод дерева разбора в консоль
+	// "--astrace" - ¬ывод лексического дерева разбора в консоль
+	// "--fixit" - 
+
 
 	const wchar_t* argvectors[] =
 	{
@@ -46,6 +49,7 @@ int main(int argc, char* argv[])
 	size_t count = argc;
 	*/
 	Settings settings;
+
 
 	vector<File*> v = settings.parse((WCHAR**)argvectors, count).getSourceFiles();
 	settings.dbgprint();
@@ -93,17 +97,11 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	//ScopeMetaInformation MI;
-	//MI.printTypes();
 
-	//CompositeType Car;
-	//Car.setName(L"Car");
-	//vector<CompositeType>& cartypes = Car.getInternalTypes();
-	//cartypes.push_back(Type());
+	wcout << "\n\n\n" << endl;
 
-
-	AbstractSyntaxTree ast;
-	ast.consumeLexicTree(trees[0]);
+	SyntaxAnalyzer SA;
+	SA.consumeLexicTree(trees[0]);
 	
 	Log::print(L"cout");
 	Log::print(L"log.txt");

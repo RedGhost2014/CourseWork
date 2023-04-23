@@ -1,6 +1,15 @@
 #include "Log.hpp"
 
+wstring ErrorMessage::syntaxError = L"Syntax Error: "; 
 
+wstring ErrorMessage::bracket_Open_Round_Missed		 = L"Missed open round bracket.";
+wstring ErrorMessage::bracket_Close_Round_Missed	 = L"Missed close round bracket.";
+
+wstring ErrorMessage::bracket_Open_Figure_Missed	 = L"Missed open figure bracket.";
+wstring ErrorMessage::bracket_Close_Figure_Missed	 = L"Missed close figure bracket.";
+
+wstring ErrorMessage::bracket_Open_Square_Missed	 = L"Missed open square bracket.";
+wstring ErrorMessage::bracket_Close_Square_Missed	 = L"Missed close square bracket.";
 
 class Error
 {

@@ -106,7 +106,7 @@ void AbstractLexicTree::checkBracketBalance()
 			{
 				if (figureBracketStack.empty())
 				{
-					Log::pushError(su->getFilename(), L"Missed open figure bracket.", su->getLine());
+					Log::pushError(su->getFilename(), ErrorMessage::syntaxError + ErrorMessage::bracket_Open_Figure_Missed, su->getLine());
 				}
 				else
 				{
@@ -117,7 +117,7 @@ void AbstractLexicTree::checkBracketBalance()
 			{
 				if (squareBracketStack.empty())
 				{
-					Log::pushError(su->getFilename(), L"Missed open square bracket.", su->getLine());
+					Log::pushError(su->getFilename(), ErrorMessage::syntaxError + ErrorMessage::bracket_Open_Square_Missed, su->getLine());
 				}
 				else
 				{
@@ -128,7 +128,7 @@ void AbstractLexicTree::checkBracketBalance()
 			{
 				if (roundBracketStack.empty())
 				{
-					Log::pushError(su->getFilename(), L"Missed open round bracket.", su->getLine());
+					Log::pushError(su->getFilename(), ErrorMessage::syntaxError + ErrorMessage::bracket_Open_Round_Missed, su->getLine());
 				}
 				else
 				{
@@ -142,7 +142,7 @@ void AbstractLexicTree::checkBracketBalance()
 	{
 		for (size_t i = 0; i < figureBracketStack.size(); i++)
 		{
-			Log::pushError(figureBracketStack[i]->getFilename(), L"Missed close figure bracket.", figureBracketStack[i]->getLine());
+			Log::pushError(figureBracketStack[i]->getFilename(), ErrorMessage::syntaxError + ErrorMessage::bracket_Close_Figure_Missed, figureBracketStack[i]->getLine());
 		}
 	}
 
@@ -150,7 +150,7 @@ void AbstractLexicTree::checkBracketBalance()
 	{
 		for (size_t i = 0; i < squareBracketStack.size(); i++)
 		{
-			Log::pushError(squareBracketStack[i]->getFilename(), L"Missed close square bracket.", squareBracketStack[i]->getLine());
+			Log::pushError(squareBracketStack[i]->getFilename(), ErrorMessage::syntaxError + ErrorMessage::bracket_Close_Square_Missed, squareBracketStack[i]->getLine());
 		}
 	}
 
@@ -158,7 +158,7 @@ void AbstractLexicTree::checkBracketBalance()
 	{
 		for (size_t i = 0; i < roundBracketStack.size(); i++)
 		{
-			Log::pushError(roundBracketStack[i]->getFilename(), L"Missed close round bracket.", roundBracketStack[i]->getLine());
+			Log::pushError(roundBracketStack[i]->getFilename(), ErrorMessage::syntaxError + ErrorMessage::bracket_Close_Round_Missed, roundBracketStack[i]->getLine());
 		}
 	}
 }

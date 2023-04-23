@@ -12,13 +12,13 @@ vector<wstring> Tokenizer::keywords = {
 
 	// Pure keywords
 	L"break",L"case",L"while",L"for",L"goto",L"return",L"continue",L"default",
-	L"if",L"else",L"extern",L"do",L"enum",L"sizeof", L"switch", L"typedef", L"union", L"namespace", 
-	
+	L"if",L"else",L"extern", L"do",L"enum",L"sizeof", L"switch", L"typedef", L"union", L"namespace", L"true", L"false",
+	L"nullptr",
 	// Types
 	L"auto",L"void", L"char", L"int",L"short", L"long",L"float",L"double", L"struct", L"operator", L"class"
 
 	// Qualifiers
-	L"const", L"register", L"signed", L"static", L"unsigned",L"volatile", L"nodiscard", L"immutable", L"public", L"private"
+	L"const", L"register", L"signed", L"static", L"unsigned", L"volatile", L"nodiscard", L"immutable", L"public", L"private"
 };
 
 Tokenizer& Tokenizer::bind(File* f)

@@ -21,11 +21,11 @@ public:
 	virtual size_t getSize();
 
 private:
+
 	vector<Variable*>* internalTypes;
 	wstring name;
 	size_t size;
 
-	// ?
 	size_t countOfPtrs;
 	bool m_isConst;
 	bool m_isVolatile;

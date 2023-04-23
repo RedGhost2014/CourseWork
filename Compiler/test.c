@@ -4,11 +4,19 @@ int* g = (int*)malloc(sizeof(int*) * 5);
 
 typedef int Word;
 
-typedef struct Car
+struct Cringe 
+
+class Bigcar;
+
+class Test
+
+class NULL {};
+
+struct Car
 {
 	int speed;
 	char* name;
-} Car;
+};
 
 namespace asd
 {
@@ -20,9 +28,25 @@ int operator~(int rhs)
 	return rhs - 3;
 }
 
+static int**, char* f3(const char*) nodiscard;
+
+static int**, char* f3(const char*) nodiscard
+{
+	return true, "helo";
+}
+
+static int f()
+{
+	int arr[20] = { 0 };
+}
+
 int main(char* arg)
 {
-	int a = 123;
+	static const int a = 123;
+	static const int aaa;
+
+	static static const const volatile unsigned int cringe;
+
 	int* b = &a;
 	b[5] = 0x1337;
 
@@ -33,6 +57,7 @@ int main(char* arg)
 	else if (a == 6)
 	{
 		printf("Another Somestring");
+		printf("");
 	}
 
 	for (size_t i = 0; i < 15; i++)
