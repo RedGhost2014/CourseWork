@@ -1,4 +1,6 @@
+#include "ALT.hpp"
 #include "Log.hpp"
+
 
 wstring ErrorMessage::syntaxError = L"Syntax Error: "; 
 
@@ -10,6 +12,8 @@ wstring ErrorMessage::bracket_Close_Figure_Missed	 = L"Missed close figure brack
 
 wstring ErrorMessage::bracket_Open_Square_Missed	 = L"Missed open square bracket.";
 wstring ErrorMessage::bracket_Close_Square_Missed	 = L"Missed close square bracket.";
+
+
 
 class Error
 {
@@ -79,6 +83,11 @@ size_t Log::getWarningsCount()
 	return baseLogSystem->getWarningsCount();
 }
 
+void Log::pushError(wstring error, LexicalUnit* unit)
+{
+	baseLogSystem->pushError(unit->getFilename(), error, unit->getLine());
+}
+
 void Log::pushError(wstring _file, wstring error, size_t _line)
 {
 	baseLogSystem->pushError(_file, error, _line);
@@ -88,6 +97,12 @@ void Log::pushWarning(wstring _file, wstring warning, size_t _line)
 {
 	baseLogSystem->pushWarning(_file, warning, _line);
 }
+
+void Log::pushWarning(wstring warning, LexicalUnit* unit)
+{
+	baseLogSystem->pushWarning(unit->getFilename(), warning, unit->getLine());
+}
+
 
 void Log::print(wstring filename)
 {

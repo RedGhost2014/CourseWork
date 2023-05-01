@@ -25,9 +25,6 @@
     <Filter Include="Исходные файлы\Tokenizer">
       <UniqueIdentifier>{99c24dc4-f6f0-49a0-83a7-368d90a2461f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Исходные файлы\AST">
-      <UniqueIdentifier>{44c839e0-2a53-49c9-808b-fcf80d3ccf79}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Исходные файлы\Log">
       <UniqueIdentifier>{e06417b1-4e0e-4b57-9ae8-675bf948d284}</UniqueIdentifier>
     </Filter>
@@ -39,6 +36,9 @@
     </Filter>
     <Filter Include="Исходные файлы\SyntaxAnalyzer">
       <UniqueIdentifier>{6137a02c-e549-43e7-b746-0ce031c5dca8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\ALT">
+      <UniqueIdentifier>{44c839e0-2a53-49c9-808b-fcf80d3ccf79}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -55,7 +55,7 @@
       <Filter>Исходные файлы\Tokenizer</Filter>
     </ClInclude>
     <ClInclude Include="ALT.hpp">
-      <Filter>Исходные файлы\AST</Filter>
+      <Filter>Исходные файлы\ALT</Filter>
     </ClInclude>
     <ClInclude Include="Log.hpp">
       <Filter>Исходные файлы\Log</Filter>
@@ -84,7 +84,7 @@
       <Filter>Исходные файлы\Tokenizer</Filter>
     </ClCompile>
     <ClCompile Include="ALT.cpp">
-      <Filter>Исходные файлы\AST</Filter>
+      <Filter>Исходные файлы\ALT</Filter>
     </ClCompile>
     <ClCompile Include="Log.cpp">
       <Filter>Исходные файлы\Log</Filter>

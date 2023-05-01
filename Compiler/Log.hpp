@@ -5,13 +5,17 @@
 
 using namespace std;
 
+class LexicalUnit;
+
 class Log
 {
 public:
 	static size_t getErrorsCount();
 	static size_t getWarningsCount();
 
+	static void pushError(wstring error, LexicalUnit* unit);
 	static void pushError(wstring _file, wstring error, size_t _line);
+	static void pushWarning(wstring warning, LexicalUnit* unit);
 	static void pushWarning(wstring _file, wstring warning, size_t _line);
 	static void print(wstring);
 };

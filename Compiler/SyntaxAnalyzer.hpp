@@ -1,10 +1,11 @@
-#include "ALT.hpp"
+#pragma once
 #include "AST.hpp"
 #include "Log.hpp"
+#include "MetaInfo.hpp"
+#include "ALT.hpp"
 
-
-class AbstractSyntaxTree;
-class AbstractLexicTree;
+//class AbstractSyntaxTree;
+//class AbstractLexicTree;
 
 class SyntaxAnalyzer
 {
@@ -19,11 +20,12 @@ private:
 	// Debug functions
 	void printLexicRow(vector<LexicalUnit*>& lexicrow);
 
-
 private:
 	void bypassLexicTree(LexicalUnit* head);
 
 	void analyze(vector<LexicalUnit*>&);
+	void leftDropTillSemi(vector<LexicalUnit*>&);
+
 
 	bool isBelongToAlphabet(wstring literal, vector<wstring>& alphabet);
 	bool expectValue(LexicalUnit* target, wstring expected);
@@ -32,11 +34,17 @@ private:
 	static vector<wstring> qualifiers;
 	static vector<wstring> typequalifiers;
 
-
+	bool isDefinition(vector<LexicalUnit*>& lexicrow);
+	// Declarator
 	bool isDeclarator(vector<LexicalUnit*>& lexicrow);
-	bool isFunctionDeclarator(vector<LexicalUnit*>& lexicrow);
 	bool isClassDeclarator(vector<LexicalUnit*>& lexicrow);
-	bool isClassDefinitor(vector<LexicalUnit*>& lexicrow);
+
+	bool isVariableDeclarator(vector<LexicalUnit*>& lexicrow);
+
+
+
+	bool isFunctionDeclarator(vector<LexicalUnit*>& lexicrow);
+
 
 	bool isTypeDefinition(vector<LexicalUnit*>& lexicrow);
 	bool isKeyword(LexicalUnit*);

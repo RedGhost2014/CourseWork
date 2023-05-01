@@ -10,7 +10,7 @@ class Variable;
 class Type
 {
 public:
-	Type() = default;
+	Type(wstring name);
 	Type(wstring name, size_t size);
 	Type(const Type&) = default;
 	~Type() = default;
@@ -18,7 +18,7 @@ public:
 	void setName(wstring _name);
 	void setSize(size_t _size);
 	wstring getName();
-	virtual size_t getSize();
+	size_t getSize();
 
 private:
 
@@ -39,6 +39,7 @@ public:
 	~Variable() = default;
 
 	wstring getIdentifier();
+	void setIdentifier(wstring identifier);
 	Type& getType();
 
 private:
@@ -68,37 +69,67 @@ private:
 	
 };
 
-class ScopeMetaInformation
+
+class AbstractScopeMetaInformation
 {
 public:
-	ScopeMetaInformation();
-	ScopeMetaInformation(const ScopeMetaInformation&) = default;
-	ScopeMetaInformation(ScopeMetaInformation&&) = default;
-	~ScopeMetaInformation() = default;
+	AbstractScopeMetaInformation();
+	AbstractScopeMetaInformation(const AbstractScopeMetaInformation&) = default;
+	AbstractScopeMetaInformation(AbstractScopeMetaInformation&&) = default;
+	~AbstractScopeMetaInformation() = default;
 	
-	void pushDeclaredType(Type);
-	void pushDefinedType(Type);
+	// IPushable
+	virtual void pushFunction(Function*) {};
+	virtual void pushVariable(Variable*) {};
+	virtual void pushType(Type*) {};
 
-	void printDeclaredTypes();
-	void printDefinedTypes();
-private:
-	vector<Type> declaredTypes;
-	vector<Type> definedTypes;
-	vector<Variable> existedVariables;
-	vector<Function> existedFunctions;
+	vector<Type*>& getExistedTypes();
+	vector<Variable*>& getExistedVariables();
+	vector<Function*>& getExistedFunctions();
+
+protected:
+	vector<Type*> existedTypes;
+	vector<Variable*> existedVariables;
+	vector<Function*> existedFunctions;
 };
 
-class ScopeMetaInformation;
+class ClassScopeMetaInformation : public AbstractScopeMetaInformation
+{
+public:
+	ClassScopeMetaInformation() = default;
+	~ClassScopeMetaInformation() = default;
+
+	void pushFunction(Function*) override;
+	void pushVariable(Variable*) override;
+	void pushType(Type*) override;
+};
+
+
+class GlobalScopeMetaInformation : public AbstractScopeMetaInformation
+{
+public:
+	GlobalScopeMetaInformation() = default;
+	~GlobalScopeMetaInformation() = default;
+
+	void pushFunction(Function*) override;
+	void pushVariable(Variable*) override;
+	void pushType(Type*) override;
+
+};
 
 class MetaInformaton
 {
 public:
 	MetaInformaton();
-	~MetaInformaton();
-	
-	void isTypeExist();
+	~MetaInformaton() = default;
 
-	vector<ScopeMetaInformation>& getMetaStack();
+	void pushScope(AbstractScopeMetaInformation);
+
+	Type* getTypeByName(wstring name);
+
+	vector<AbstractScopeMetaInformation>& getMetaStack();
 private:
-	vector<ScopeMetaInformation> metaStack;
+	vector<AbstractScopeMetaInformation> metaStack;
 };
+
+extern MetaInformaton MetaInfo;
