@@ -1,16 +1,16 @@
 
 int i;
-int* g = (int*)malloc(sizeof(int*) * 5);
+const const int*& ptr ;
+static const int* g = (int*)malloc(sizeof(int*) * 5);
 
 typedef int Word;
 
-struct Cringe 
+struct Cringe
 
-class Bigcar;
+struct Cringe
+{
 
-class Test
-
-class NULL {};
+};
 
 struct Car
 {
@@ -44,6 +44,8 @@ int main(char* arg)
 {
 	static const int a = 123;
 	static const int aaa;
+
+	int* Car;
 
 	static static const const volatile unsigned int cringe;
 

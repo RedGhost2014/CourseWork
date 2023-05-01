@@ -18,6 +18,7 @@ void SyntaxAnalyzer::bypassLexicTree(LexicalUnit* head)
 
 	vector<LexicalUnit*>& currentLexicalRow = head->getTree();
 
+
 	size_t i = 0;
 	while (i < currentLexicalRow.size())
 	{
@@ -25,15 +26,19 @@ void SyntaxAnalyzer::bypassLexicTree(LexicalUnit* head)
 		parserow.push_back(currentLexicalRow[i]);
 		if (tmp == L"{" || tmp == L";")
 		{
-			printLexicRow(parserow);
-			analyze(parserow);
-			parserow.clear();
+			//printLexicRow(parserow);
+			
+			while (!parserow.empty())
+			{
+				analyze(parserow);
+				leftDropTillSemi(parserow);
+			}
 		}
 		i++;
 	}
 	if (!parserow.empty())
 	{
-		printLexicRow(parserow);
+		//printLexicRow(parserow);
 		analyze(parserow);
 	}
 }
@@ -46,7 +51,7 @@ void SyntaxAnalyzer::analyze(vector<LexicalUnit*>& lexicrow)
 		// TODO: Drop Scope
 		lexicrow.erase(lexicrow.begin());
 	}
-	if (lexicrow.empty())
+	if (lexicrow.empty() || expectValue(lexicrow[0], L";"))
 		return;
 
 	if (isDeclarator(lexicrow))
@@ -57,6 +62,10 @@ void SyntaxAnalyzer::analyze(vector<LexicalUnit*>& lexicrow)
 			wcout << lexicrow[i]->getValue() << L" ";
 		}
 		wcout << endl;*/
+	}
+	else
+	{
+
 	}
 
 
@@ -160,17 +169,52 @@ void SyntaxAnalyzer::printLexicRow(vector<LexicalUnit*>& lexicrow)
 	z++;
 }
 
+void SyntaxAnalyzer::leftDropTillSemi(vector<LexicalUnit*>& lexicrow)
+{
+	size_t i = 0;
+	while (!lexicrow.empty() && lexicrow[i]->getValue() != L";")
+	{
+		lexicrow.erase(lexicrow.begin());
+	}
+	if (!lexicrow.empty())
+		lexicrow.erase(lexicrow.begin());
+}
+
+bool SyntaxAnalyzer::isDefinition(vector<LexicalUnit*>& lexicrow)
+{
+	if (lexicrow.empty())
+		return false;
+	return lexicrow.back()->getValue() == L"{";
+}
+
 bool SyntaxAnalyzer::isClassDeclarator(vector<LexicalUnit*>& lexicrow)
 {
 	// TODO: Check Flag
-	bool isFixit = true;
+	static bool isFixit = false;
 
 	wstring keyword = lexicrow[0]->getValue();
-	if ((keyword == L"struct" || keyword == L"class") && lexicrow[1]->getKey() == L"Identifier")
+	if ((keyword == L"struct" || keyword == L"class"))
 	{
-		//return true;
+		if (lexicrow[1]->getKey() != L"Identifier")
+		{
+			Log::pushError(ErrorMessage::syntaxError + L"Identifier expected.", lexicrow[1]);
+			return false;
+		}
 		if (expectValue(lexicrow[2], L";"))
 		{
+			wstring name = lexicrow[1]->getValue();
+			if (!MetaInfo.getTypeByName(name))
+				MetaInfo.getMetaStack().back().pushType(new Type(name));
+			return true;
+		}
+		else if (expectValue(lexicrow[2], L"{"))
+		{
+			wstring name = lexicrow[1]->getValue();
+			if (!MetaInfo.getTypeByName(name))
+				MetaInfo.getMetaStack().back().pushType(new Type(name));
+
+			ClassScopeMetaInformation scope;
+			MetaInfo.pushScope(scope);
 			return true;
 		}
 		// TODO: Check Flag
@@ -180,53 +224,163 @@ bool SyntaxAnalyzer::isClassDeclarator(vector<LexicalUnit*>& lexicrow)
 			s->setFilename(lexicrow[1]->getFilename());
 			s->setKey(L"End of line");
 			s->setValue(L";");
+
 			auto it = lexicrow.begin();
 			lexicrow.insert(it + 2, s);
-			Log::pushWarning(lexicrow[1]->getFilename(), L"Missed symbol: \';\' missed but emplaced by --fixit.", lexicrow[1]->getLine());
+			
+			Log::pushWarning(ErrorMessage::syntaxError + L"\';\' missed but emplaced by --fixit.", lexicrow[1]);
 
-			size_t i = 0;
-			while (lexicrow[i]->getValue() != L";")
-			{
-				lexicrow.erase(lexicrow.begin());
-			}
-			lexicrow.erase(lexicrow.begin());
-
-			analyze(lexicrow);
+			wstring name = lexicrow[1]->getValue();
+			if (!MetaInfo.getTypeByName(name))
+				MetaInfo.getMetaStack().back().pushType(new Type(name));
 			return true;
 		}
-		else
-			Log::pushError(lexicrow[2]->getFilename(), L"Unexpected symbol: \';\' expected.", lexicrow[2]->getLine());
+		else Log::pushError(ErrorMessage::syntaxError + L"\';\' or \'{\' expected.", lexicrow[1]);
 	}
 	return false;
 }
 
-bool SyntaxAnalyzer::isClassDefinitor(vector<LexicalUnit*>& lexicrow)
+bool SyntaxAnalyzer::isVariableDeclarator(vector<LexicalUnit*>& lexicrow)
 {
-	wstring keyword = lexicrow[0]->getValue();
-	if ((keyword == L"struct" || keyword == L"class") && lexicrow[1]->getKey() == L"Identifier")
+	bool isStatic = false;
+	bool isRef = false;
+
+	//bool is = false;
+	size_t countOfUnsigned = 0;
+	size_t countOfPtrs = 0;
+	size_t countOfConst = 0;
+	wstring typeName;
+
+
+	size_t i = 0;
+
+	while (i < lexicrow.size() && !MetaInfo.getTypeByName(lexicrow[i]->getValue()))
 	{
-		if (expectValue(lexicrow[2], L"{") /*|| expectValue(lexicrow[2], L";")*/)
-			return true;
+		wstring key = lexicrow[i]->getKey();
+		wstring value = lexicrow[i]->getValue();
+		if (key == L"Keyword")
+		{
+			if (value == L"static")
+			{
+				if (!isStatic)
+					isStatic = true;
+				else
+				{
+					Log::pushError(L"Storage class can be declared only once.", lexicrow[i]);
+				}
+			}
+			else if (value == L"const")
+			{
+				countOfConst++;
+			}
+			else if (value == L"unsigned")
+			{
+				countOfUnsigned++;
+			}
+		}
+		i++;
+	}
+	typeName = lexicrow[i]->getValue();
+
+	if (countOfConst > 1)
+	{
+		Log::pushWarning(L"Qualififer \"const\" repeated more that 1 time.", lexicrow[0]);
+	}
+	if (countOfUnsigned > 1)
+	{
+		Log::pushWarning(L"Qualififer \"unsigned\" repeated more that 1 time.", lexicrow[0]);
+	}
+
+	i++;
+
+	while (i < lexicrow.size() && lexicrow[i]->getKey() == L"Operator")
+	{
+		wstring opvalue = lexicrow[i]->getValue();
+		if (opvalue == L"*")
+		{
+			if (isRef)
+			{
+				Log::pushError(ErrorMessage::syntaxError + L"Reference cannot be over pointer.", lexicrow[i]);
+			}
+			countOfPtrs++;
+		}
+		else if (opvalue == L"&")
+		{
+			if (!isRef)
+			{
+				isRef = true;
+			}
+			else 
+			{
+				Log::pushError(ErrorMessage::syntaxError + L"Rvalue reference does not supported.", lexicrow[i]);
+			}
+		}
 		else
 		{
-			Log::pushError(lexicrow[1]->getFilename(), L"Unresolved type declaration: \'{\' or \';\' expected.", lexicrow[1]->getLine());
+			Log::pushError(ErrorMessage::syntaxError + L"\'*\' or \'&\' expected.", lexicrow[i]);
 		}
+		i++;
+	}
+
+	if (i < lexicrow.size())
+	{
+		if (!expectKey(lexicrow[i], L"Identifier"))
+		{
+			Log::pushError(ErrorMessage::syntaxError + L"Identifier expected.", lexicrow[i]);
+			return false;
+		}
+		i++;
+		if (i < lexicrow.size() && expectValue(lexicrow[i], L";"))
+		{
+
+			// TODO:
+			//Variable* var = new Variable;
+			MetaInfo.getMetaStack().back().pushVariable();
+		}
+		if (i < lexicrow.size() && expectValue(lexicrow[i], L"="))
+		{
+			// TODO reverse polish notation in Tree
+			wcout << "There comes value definition" << endl;
+		}
+		return true;
+		//if (expectValue(lexicrow[i + 1], L";") || expectValue(lexicrow[i + 1], L"="))
+		//{
+		//	//return true;
+		//}
+		//else
+		//{
+		//	Log::pushError(ErrorMessage::syntaxError + L"\';\' or \'=\' expected.", lexicrow[i]);
+		//}
 	}
 	return false;
 }
+
 
 bool SyntaxAnalyzer::isDeclarator(vector<LexicalUnit*>& lexicrow)
 {
 	if (isClassDeclarator(lexicrow))
 	{
-		wcout << L"Declared new type: " << lexicrow[1]->getValue() << endl;
+		if (isDefinition(lexicrow))
+		{
+			wcout << L"Defined new type:" << lexicrow[1]->getValue() << endl;
+			// TODO: Push Scope
+			//return true;
+		}
+		else
+		{
+			wcout << L"Declared new type:" << lexicrow[1]->getValue() << endl;
+		}
 		return true;
+	}
+	else if (isVariableDeclarator(lexicrow))
+	{
+		wcout << L"Declared new variable: ";
+		for (size_t i = 0; i < lexicrow.size(); i++)
+		{
+			wcout << lexicrow[i]->getValue() << L" ";
+		}
+		wcout << endl;
 	}
 
-	if (isClassDefinitor(lexicrow))
-	{
-		wcout << L"Defined new type: " << lexicrow[1]->getValue() << endl;
-		return true;
-	}
 	return false;
 }

@@ -69,6 +69,7 @@ int main(int argc, char* argv[])
 		trees.push_back(alt);
 		alt->push(f);
 		t.bind(f).open();
+
 		while (!t.eof())
 		{
 			LexicalUnit* result = t.getNextToken();
@@ -102,7 +103,8 @@ int main(int argc, char* argv[])
 
 	SyntaxAnalyzer SA;
 	SA.consumeLexicTree(trees[0]);
-	
+	//SA.consumeLexicTree(trees[0]);
+
 	Log::print(L"cout");
 	Log::print(L"log.txt");
 

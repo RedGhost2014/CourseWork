@@ -2,20 +2,25 @@
 
 -------------------
 
-Total Errors: 2
+Total Errors: 9
 
 1) <somecode.c>: (2): 	Syntax Error: Missed close figure bracket.
-2) <test.c>: (9): 	Unresolved type declaration: '{' or ';' expected.
+2) <test.c>: (8): 	Syntax Error: ';' or '{' expected.
+3) <test.c>: (14): 	Syntax Error: ';' or '{' expected.
+4) <test.c>: (29): 	Syntax Error: Identifier expected.
+5) <test.c>: (34): 	Syntax Error: '*' or '&' expected.
+6) <test.c>: (34): 	Syntax Error: Identifier expected.
+7) <test.c>: (36): 	Syntax Error: '*' or '&' expected.
+8) <test.c>: (36): 	Syntax Error: Identifier expected.
+9) <test.c>: (53): 	Storage class can be declared only once.
 
 
 -------------------
 
-Total Warnings: 4
+Total Warnings: 2
 
-1) <test.c>: (7): 	Missed symbol: ';' missed but emplaced by --fixit.
-2) <test.c>: (11): 	Missed symbol: ';' missed but emplaced by --fixit.
-3) <test.c>: (13): 	Missed symbol: ';' missed but emplaced by --fixit.
-4) <test.c>: (15): 	Missed symbol: ';' missed but emplaced by --fixit.
+1) <test.c>: (3): 	Qualififer "const" repeated more that 1 time.
+2) <test.c>: (53): 	Qualififer "const" repeated more that 1 time.
 
 
 -------------------
