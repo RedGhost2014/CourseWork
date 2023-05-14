@@ -20,23 +20,79 @@ wchar_t* GetWC(const char* c)
 	return wc;
 }
 
-//void f(char&**);
+//
+//class AbstractDebugger
+//{
+//public:
+//	AbstractDebugger() {};
+//	~AbstractDebugger() {};
+//	virtual AbstractDebugger& operator<<(wstring s) = 0 { return *this; }
+//};
+//
+//class ConsoleDebugger : public AbstractDebugger
+//{
+//public:
+//	AbstractDebugger& operator<<(wstring s) override
+//	{
+//		wcout << s;
+//		return *this;
+//	}
+//};
+//
+//class NullDebugger : public AbstractDebugger
+//{
+//public:
+//	AbstractDebugger& operator<<(wstring s) override
+//	{
+//		return *this;
+//	}
+//};
+//
+//
+//class Debug : AbstractDebugger
+//{
+//public:
+//	Debug() = default;
+//	~Debug() = default;
+//	void pushDebugger(AbstractDebugger* s) { debuggers.push_back(s); }
+//
+//	AbstractDebugger& operator<<(wstring s) override
+//	{
+//		for (AbstractDebugger* d : debuggers)
+//		{
+//			AbstractDebugger& concrete = *d;
+//			concrete << s;
+//		}
+//		return *this;
+//	}
+//private:
+//	vector<AbstractDebugger*> debuggers;
+//};
+
 
 int main(int argc, char* argv[])
 {
+	/*Debug debugmachine;
+	debugmachine.pushDebugger(new ConsoleDebugger);
+	debugmachine.pushDebugger(new NullDebugger);
+
+	debugmachine << L"Wstring" << L"somestring";
+
+	return 0;*/
+
 	SetConsoleCP(1251);
 	_wsetlocale(LC_ALL, L"Rus");
 
 	// "--astrace" - Вывод лексического дерева разбора в консоль
-	// "--fixit" - 
+	// "--fixit" - Исправить точки с запятой
 
 
 	const wchar_t* argvectors[] =
 	{
 		L"Compiler.exe",
-		L"test.c",
-		//L"Hello World.i",
 		L"somecode.c",
+		//L"Hello World.i",
+		//L"test.c",
 		L"--astrace",
 	};
 	size_t count = sizeof(argvectors) / sizeof(wchar_t*);
@@ -103,7 +159,6 @@ int main(int argc, char* argv[])
 
 	SyntaxAnalyzer SA;
 	SA.consumeLexicTree(trees[0]);
-	//SA.consumeLexicTree(trees[0]);
 
 	Log::print(L"cout");
 	Log::print(L"log.txt");

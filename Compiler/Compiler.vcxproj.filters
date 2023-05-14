@@ -66,6 +66,9 @@
     <ClInclude Include="MetaInfo.hpp">
       <Filter>Исходные файлы\MetaInfo</Filter>
     </ClInclude>
+    <ClInclude Include="IName.hpp">
+      <Filter>Исходные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File.cpp">

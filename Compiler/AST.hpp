@@ -2,6 +2,8 @@
 #include <iostream>
 #include <vector>
 #include "ALT.hpp"
+#include "IName.hpp"
+#include "SyntaxAnalyzer.hpp"
 
 using namespace std;
 
@@ -25,23 +27,26 @@ private:
 };
 
 
-class SyntaxUnit
+class SyntaxUnit : public IName
 {
 public:
 	SyntaxUnit() = default;
 	~SyntaxUnit() = default;
-	virtual wstring getSyntaxType();
 
 protected:
-	wstring type;
 	vector<SyntaxUnit*> branch;
 };
 
-class Declarator : SyntaxUnit
+class VarDeclRef : public SyntaxUnit
 {
 public:
-	Declarator() { type = L"Declarator"; };
+	VarDeclRef()
+	{ 
+		name = L"VarDeclRef";
+	};
+
+	void setVar(Variable* var);
 
 private:
-
+	Variable* var;
 };
