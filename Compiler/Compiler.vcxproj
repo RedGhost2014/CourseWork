@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="File.hpp" />
+    <ClInclude Include="IName.hpp" />
     <ClInclude Include="Log.hpp" />
     <ClInclude Include="AST.hpp" />
     <ClInclude Include="MetaInfo.hpp" />

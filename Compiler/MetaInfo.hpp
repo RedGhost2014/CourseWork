@@ -1,50 +1,72 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include "Log.hpp"
+#include "ALT.hpp"
+#include "IName.hpp"
 
 using namespace std;
 
 class Type;
 class Variable;
 
-class Type
+
+class Type : public IName
 {
 public:
+	Type();
 	Type(wstring name);
 	Type(wstring name, size_t size);
-	Type(const Type&) = default;
+	Type(wstring name, size_t size, bool);
+
+
+	Type(const Type&);
+	Type& operator=(const Type&);
+
+
 	~Type() = default;
 
-	void setName(wstring _name);
 	void setSize(size_t _size);
-	wstring getName();
+
+	Type& setIsConst(bool);
+	Type& setIsUnsigned(bool);
+	Type& setIsVolatile(bool);
+	Type& setIsRef(bool);
+	Type& setIsDefined(bool);
+	Type& setIsCountOfPtrs(size_t);
+
+	bool isDefined();
+
 	size_t getSize();
+	vector<wstring>& getSynonims();
+	vector<Variable*>* getInternal();
 
 private:
 
 	vector<Variable*>* internalTypes;
-	wstring name;
+	vector<wstring> synonyms;
 	size_t size;
 
 	size_t countOfPtrs;
 	bool m_isConst;
+	bool m_isRef;
 	bool m_isVolatile;
 	bool m_isUnsigned;
+
+	bool m_isDefined;
 };
 
-class Variable
+class Variable : public IName
 {
 public:
 	Variable() = default;
 	~Variable() = default;
 
-	wstring getIdentifier();
-	void setIdentifier(wstring identifier);
 	Type& getType();
+	void setType(Type&);
 
 private:
 	Type type;
-	wstring identifier;
 };
 
 
@@ -59,14 +81,27 @@ private:
 };
 
 
-class Function
+class Function : public IName
 {
 public:
-	Function() = default;
+	Function();
 	~Function() = default;
 
+	vector<Type*>& getReturnTypes();
+	vector<Variable*>& getFunctionArguments();
+	vector<Function*>& getFunctionOverloads();
+
+	bool isDefined();
+	void setDefinitionStatus(bool);
+	size_t getStackSize();
+	void setStackSize(size_t newsize);
+
 private:
-	
+	bool m_isDefined;
+	size_t stackSize;
+	vector<Function*> functionOverloads;
+	vector<Type*> returnTypes;
+	vector<Variable*> functionArguments;
 };
 
 
@@ -76,9 +111,9 @@ public:
 	AbstractScopeMetaInformation();
 	AbstractScopeMetaInformation(const AbstractScopeMetaInformation&) = default;
 	AbstractScopeMetaInformation(AbstractScopeMetaInformation&&) = default;
-	~AbstractScopeMetaInformation() = default;
-	
-	// IPushable
+	virtual ~AbstractScopeMetaInformation() = default;
+
+	// IPush
 	virtual void pushFunction(Function*) {};
 	virtual void pushVariable(Variable*) {};
 	virtual void pushType(Type*) {};
@@ -95,15 +130,16 @@ protected:
 
 class ClassScopeMetaInformation : public AbstractScopeMetaInformation
 {
+	LexicalUnit* start;
 public:
 	ClassScopeMetaInformation() = default;
-	~ClassScopeMetaInformation() = default;
+	ClassScopeMetaInformation(LexicalUnit*);
+	~ClassScopeMetaInformation() override;
 
 	void pushFunction(Function*) override;
 	void pushVariable(Variable*) override;
 	void pushType(Type*) override;
 };
-
 
 class GlobalScopeMetaInformation : public AbstractScopeMetaInformation
 {
@@ -117,19 +153,51 @@ public:
 
 };
 
+class FunctionScopeMetaInformation : public AbstractScopeMetaInformation
+{
+	Function* basicFunction;
+	LexicalUnit* start;
+public:
+	FunctionScopeMetaInformation() = default;
+	FunctionScopeMetaInformation(Function* currentFunction, LexicalUnit* _start);
+	~FunctionScopeMetaInformation() override;
+
+	Function* getBasicFunction();
+
+	void pushFunction(Function*) override;
+	void pushVariable(Variable*) override;
+	void pushType(Type*) override;
+};
+
+class TempScopeMetaInformation : public AbstractScopeMetaInformation
+{
+public:
+	TempScopeMetaInformation() = default;
+	~TempScopeMetaInformation() = default;
+
+	void pushFunction(Function*) override;
+	void pushVariable(Variable*) override;
+	void pushType(Type*) override;
+};
+
+
 class MetaInformaton
 {
 public:
 	MetaInformaton();
 	~MetaInformaton() = default;
 
-	void pushScope(AbstractScopeMetaInformation);
+	void pushScope(AbstractScopeMetaInformation*);
+	void popScope();
+	AbstractScopeMetaInformation* back();
 
+	Variable* getVariableByName(wstring name);
 	Type* getTypeByName(wstring name);
+	Function* getFunctionByName(wstring name);
 
-	vector<AbstractScopeMetaInformation>& getMetaStack();
+	vector<AbstractScopeMetaInformation*>& getMetaStack();
 private:
-	vector<AbstractScopeMetaInformation> metaStack;
+	vector<AbstractScopeMetaInformation*> metaStack;
 };
 
 extern MetaInformaton MetaInfo;

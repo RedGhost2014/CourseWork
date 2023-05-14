@@ -26,7 +26,6 @@ private:
 	void analyze(vector<LexicalUnit*>&);
 	void leftDropTillSemi(vector<LexicalUnit*>&);
 
-
 	bool isBelongToAlphabet(wstring literal, vector<wstring>& alphabet);
 	bool expectValue(LexicalUnit* target, wstring expected);
 	bool expectKey(LexicalUnit* target, wstring expected);
@@ -35,23 +34,21 @@ private:
 	static vector<wstring> typequalifiers;
 
 	bool isDefinition(vector<LexicalUnit*>& lexicrow);
+	
 	// Declarator
 	bool isDeclarator(vector<LexicalUnit*>& lexicrow);
+	
 	bool isClassDeclarator(vector<LexicalUnit*>& lexicrow);
 
+	bool isTypedefDeclarator(vector<LexicalUnit*>& lexicrow);
+
 	bool isVariableDeclarator(vector<LexicalUnit*>& lexicrow);
-
-
-
+	
 	bool isFunctionDeclarator(vector<LexicalUnit*>& lexicrow);
+	void parseFunctionParentheses(vector<LexicalUnit*>& internalLexicRow, vector<Variable*>& functionArgumentsToFill);
 
+	Type* retrieveType(vector<LexicalUnit*>& lexicrow, size_t* countOfParsedUnits);
 
-	bool isTypeDefinition(vector<LexicalUnit*>& lexicrow);
-	bool isKeyword(LexicalUnit*);
-
-	bool isQualifier(LexicalUnit*);
-	bool isStatic(LexicalUnit*);
-	bool isConst(LexicalUnit*);
 
 	AbstractSyntaxTree* tree;
 };
