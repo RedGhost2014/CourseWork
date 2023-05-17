@@ -1,5 +1,6 @@
 #include "Settings.hpp"
 #include "Utils.hpp"
+#include "File.hpp"
 
 Settings& Settings::parse(wchar_t* argv[], size_t argc)
 {
@@ -19,7 +20,8 @@ Settings& Settings::parse(wchar_t* argv[], size_t argc)
 
 		if (Utils::isFileExists(names[i]))
 		{
-			f->setName(names[i]).setExistState(true);
+			f->setName(names[i]);
+			f->setExistState(true);
 			sourceFiles.push_back(f);
 			continue;
 		}
@@ -30,7 +32,8 @@ Settings& Settings::parse(wchar_t* argv[], size_t argc)
 		{
 			if (Utils::isFileExists(names[i] + ext))
 			{
-				f->setName(names[i] + ext).setExistState(true);
+				f->setName(names[i] + ext);
+				f->setExistState(true);
 
 				sourceFiles.push_back(f);
 				found = true;
@@ -41,7 +44,8 @@ Settings& Settings::parse(wchar_t* argv[], size_t argc)
 		if (found)
 			continue;
 		
-		f->setName(names[i]).setExistState(false);
+		f->setName(names[i]);
+		f->setExistState(false);
 		sourceFiles.push_back(f);
 	}
 	return *this;

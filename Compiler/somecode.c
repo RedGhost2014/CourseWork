@@ -1,8 +1,10 @@
 class Complex
 {
-	int real;
+	int real = 5;
 	int image;
 };
+
+int x = 5;
 
 int, f1()
 {
@@ -11,6 +13,7 @@ int, f1()
 
 int f(const char* name, int, short myshort)
 {
+	const unsigned Complex s;
 	int x;
 	short y;
 }

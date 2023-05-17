@@ -17,156 +17,337 @@ void IName::setName(wstring _name)
 
 
 
-
-
-
-
-
-
-
-Type::Type()
+void BasicAbstractType::setIsCountOfPtrs(size_t count)
 {
-	m_isRef = false;
-	m_isDefined = false;
-
-	internalTypes = nullptr;
-	size = 1;
-	m_isConst = false;
-	m_isUnsigned = false;
-	m_isVolatile = false;
-	countOfPtrs = 0;
+	countOfPtrs = count;
 }
 
-Type::Type(wstring name)
+void BasicAbstractType::setIsStatic(bool condition) 
 {
-	internalTypes = nullptr;
-	size = 1;
-	this->name = name;
-	m_isConst = false;
-	m_isUnsigned = false;
-	m_isVolatile = false;
-	countOfPtrs = 0;
+	m_isStatic = condition;
 }
 
-vector<wstring>& Type::getSynonims()
+void BasicAbstractType::setIsConst(bool condition)
+{
+	m_isConst = condition;
+}
+void BasicAbstractType::setIsRef(bool condition)
+{
+	m_isRef = condition;
+}
+
+void BasicAbstractType::setIsVolatile(bool condition)
+{
+	m_isVolatile = condition;
+}
+
+size_t BasicAbstractType::getSize()
+{
+	return size;
+};
+
+void BasicAbstractType::setSize(size_t _size)
+{
+	size = _size;
+}
+
+vector<wstring>& BasicAbstractType::getSynonims()
 {
 	return synonyms;
 }
 
-Type::Type(wstring _name, size_t _size)
+//BasicAbstractType* BasicAbstractType::clone()
+//{
+//	return new BasicAbstractType(*this);
+//}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PrimitiveType::PrimitiveType()
 {
-	name = _name;
-	size = _size;
-}
-Type::Type(wstring _name, size_t _size, bool defined)
-{
-	name = _name;
-	size = _size;
-	m_isDefined = defined;
+	size = 1;
+
+	m_isRef = false;
+	m_isConst = false;
+	m_isUnsigned = false;
+	m_isVolatile = false;
+	m_isStatic = false;
+
+	countOfPtrs = 0;
 }
 
-Type::Type(const Type& rhs)
+PrimitiveType::PrimitiveType(wstring _name)
+{
+	size = 1;
+	name = _name;
+
+	m_isRef = false;
+	m_isConst = false;
+	m_isUnsigned = false;
+	m_isVolatile = false;
+	m_isStatic = false;
+
+	countOfPtrs = 0;
+}
+
+PrimitiveType::PrimitiveType(wstring _name, size_t _size)
+{
+	name = _name;
+	size = _size;
+
+	m_isRef = false;
+	m_isConst = false;
+	m_isUnsigned = false;
+	m_isVolatile = false;
+	m_isStatic = false;
+
+	countOfPtrs = 0;
+}
+
+void PrimitiveType::setIsUnsigned(bool condition)
+{
+	m_isUnsigned = condition;
+}
+
+
+PrimitiveType::PrimitiveType(const PrimitiveType& rhs)
 {
 	name = rhs.name;
 	size = rhs.size;
+
+	synonyms = rhs.synonyms;
+
 	m_isConst = rhs.m_isConst;
 	m_isUnsigned = rhs.m_isUnsigned;
 	m_isVolatile = rhs.m_isVolatile;
-	countOfPtrs = rhs.countOfPtrs;
+	m_isStatic = rhs.m_isStatic;
+	m_isRef = rhs.m_isRef;
 
-	if (rhs.internalTypes != nullptr)
+	countOfPtrs = rhs.countOfPtrs;
+}
+
+PrimitiveType& PrimitiveType::operator=(const PrimitiveType& rhs)
+{
+	name = rhs.name;
+	size = rhs.size;
+
+	synonyms = rhs.synonyms;
+
+	m_isConst = rhs.m_isConst;
+	m_isUnsigned = rhs.m_isUnsigned;
+	m_isVolatile = rhs.m_isVolatile;
+	m_isStatic = rhs.m_isStatic;
+	m_isRef = rhs.m_isRef;
+
+	countOfPtrs = rhs.countOfPtrs;
+	return *this;
+}
+
+
+PrimitiveType* PrimitiveType::clone()
+{
+	return new PrimitiveType(*this);
+}
+
+
+
+
+
+
+
+
+
+
+
+CompositeType::CompositeType()
+{
+	size = 1;
+
+	m_isRef = false;
+	m_isConst = false;
+	m_isVolatile = false;
+	m_isStatic = false;
+
+	m_isDefined = false;
+	this->internalTypes = nullptr;
+
+	countOfPtrs = 0;
+}
+
+CompositeType::CompositeType(wstring _name)
+{
+	size = 1;
+	name = _name;
+
+
+	m_isRef = false;
+	m_isConst = false;
+	m_isVolatile = false;
+	m_isStatic = false;
+
+	m_isDefined = false;
+	this->internalTypes = nullptr;
+
+	countOfPtrs = 0;
+}
+
+CompositeType::~CompositeType()
+{
+	if (internalTypes != nullptr)
 	{
-		this->internalTypes = new vector<Variable*>;
-		for (size_t i = 0; i < rhs.internalTypes->size(); i++)
+		for (size_t i = 0; i < internalTypes->size(); i++)
 		{
-			internalTypes->push_back(rhs.internalTypes[0][i]);
+			delete (*internalTypes)[i];
 		}
 	}
 }
 
-Type& Type::operator=(const Type& rhs)
+CompositeType::CompositeType(const CompositeType& rhs)
 {
 	name = rhs.name;
 	size = rhs.size;
+
+	synonyms = rhs.synonyms;
+
 	m_isConst = rhs.m_isConst;
-	m_isUnsigned = rhs.m_isUnsigned;
 	m_isVolatile = rhs.m_isVolatile;
+	m_isStatic = rhs.m_isStatic;
+	m_isRef = rhs.m_isRef;
+
 	countOfPtrs = rhs.countOfPtrs;
 
-	if (rhs.internalTypes != nullptr)
+	if (internalTypes != nullptr)
 	{
-		this->internalTypes = new vector<Variable*>;
-		for (size_t i = 0; i < rhs.internalTypes->size(); i++)
+		for (size_t i = 0; i < internalTypes->size(); i++)
 		{
-			internalTypes->push_back(rhs.internalTypes[0][i]);
+			delete (*internalTypes)[i];
 		}
 	}
-	else
-		internalTypes = nullptr;
 
-	return *this;
+	internalTypes = nullptr;
+
+	if (rhs.internalTypes == nullptr)
+	{
+		return;
+	}
+
+	internalTypes = new vector<Variable*>;
+
+	vector<Variable*>* rhsv = rhs.internalTypes;
+
+	for (size_t i = 0; i < rhsv->size(); i++)
+	{
+		internalTypes->push_back(new Variable(*(rhsv[0][i])));
+	}
 }
 
-
-
-void Type::setSize(size_t _size)
+CompositeType& CompositeType::operator=(const CompositeType& rhs)
 {
-	size = _size;
+	name = rhs.name;
+	size = rhs.size;
+
+	synonyms = rhs.synonyms;
+
+	m_isConst = rhs.m_isConst;
+	m_isVolatile = rhs.m_isVolatile;
+	m_isStatic = rhs.m_isStatic;
+	m_isRef = rhs.m_isRef;
+
+	countOfPtrs = rhs.countOfPtrs;
+
+	if (internalTypes != nullptr)
+	{
+		for (size_t i = 0; i < internalTypes->size(); i++)
+		{
+			delete (*internalTypes)[i];
+		}
+	}
+
+	internalTypes = nullptr;
+
+	if (rhs.internalTypes == nullptr)
+	{
+		return *this;
+	}
+
+	internalTypes = new vector<Variable*>;
+
+	vector<Variable*>* rhsv = rhs.internalTypes;
+
+	for (size_t i = 0; i < rhsv->size(); i++)
+	{
+		internalTypes->push_back(new Variable(*(rhsv[0][i])));
+	}
+	return *this;
 }
 
-size_t Type::getSize() { return size; }
-vector<Variable*>* Type::getInternal() { return internalTypes; }
 
-Type& Type::setIsConst(bool b) 
-{ 
-	m_isConst = b;
-	return *this;
-}
-Type& Type::setIsUnsigned(bool b)
-{ 
-	m_isUnsigned = b;
-	return *this;
-}
-Type& Type::setIsVolatile(bool b) 
-{
-	m_isVolatile = b;
-	return *this;
-}
-Type& Type::setIsRef(bool b)
-{
-	m_isRef = b;
-	return *this;
-}
-
-Type& Type::setIsDefined(bool b)
-{
-	m_isDefined = b;
-	return *this;
-}
-
-bool Type::isDefined()
+bool CompositeType::isDefined()
 {
 	return m_isDefined;
 }
 
-Type& Type::setIsCountOfPtrs(size_t count) 
-{ 
-	countOfPtrs = count; 
-	return *this;
+void CompositeType::setIsDefined(bool condition)
+{
+	m_isDefined = condition;
+}
+
+vector<Variable*>* CompositeType::getInternal()
+{
+	return internalTypes;
+}
+
+
+CompositeType* CompositeType::clone()
+{
+	return new CompositeType(*this);
 }
 
 
 
 
-Type& Variable::getType()
+
+
+
+BasicAbstractType* Variable::getType()
 {
 	return type;
 }
-void Variable::setType(Type& t)
+
+void Variable::setType(BasicAbstractType* t)
 {
 	type = t;
 }
 
+Variable::Variable(const Variable& rhs)
+{
+	PrimitiveType* primitive = dynamic_cast<PrimitiveType*>(rhs.type);
+	CompositeType* composite = dynamic_cast<CompositeType*>(rhs.type);
+	if (type != nullptr)
+	{
+		delete type;
+	}
+
+	if (primitive)
+	{
+		type = new PrimitiveType(*primitive);
+	}
+	else if (composite)
+	{
+		type = new CompositeType(*composite);
+	}
+}
 
 
 
@@ -178,7 +359,7 @@ Function::Function()
 	stackSize = 0;
 }
 
-vector<Type*>& Function::getReturnTypes() 
+vector<BasicAbstractType*>& Function::getReturnTypes()
 {
 	return returnTypes;
 }
@@ -235,7 +416,7 @@ void Function::setStackSize(size_t newsize)
 
 AbstractScopeMetaInformation::AbstractScopeMetaInformation() {}
 
-vector<Type*>& AbstractScopeMetaInformation::getExistedTypes() { return existedTypes; };
+vector<BasicAbstractType*>& AbstractScopeMetaInformation::getExistedTypes() { return existedTypes; };
 vector<Variable*>& AbstractScopeMetaInformation::getExistedVariables() { return existedVariables;  };
 vector<Function*>& AbstractScopeMetaInformation::getExistedFunctions() { return existedFunctions; };
 
@@ -293,7 +474,7 @@ void GlobalScopeMetaInformation::pushFunction(Function* f)
 	existedFunctions.push_back(f);
 }
 
-void GlobalScopeMetaInformation::pushType(Type* t)
+void GlobalScopeMetaInformation::pushType(BasicAbstractType* t)
 {
 	existedTypes.push_back(t);
 }
@@ -306,13 +487,17 @@ void GlobalScopeMetaInformation::pushVariable(Variable* v)
 
 
 
-
-
 ClassScopeMetaInformation::ClassScopeMetaInformation(LexicalUnit* lu) : start(lu) {}
 ClassScopeMetaInformation::~ClassScopeMetaInformation() 
 {
-	Type* currentT = MetaInfo.getTypeByName(start->getValue());
-	vector<Variable*>* intertnaltypes = currentT->getInternal();
+	BasicAbstractType* currentT = MetaInfo.getTypeByName(start->getValue());
+
+	CompositeType* ct = dynamic_cast<CompositeType*>(currentT);
+
+	if (ct == nullptr)
+		return;
+
+	vector<Variable*>* intertnaltypes = ct->getInternal();
 
 	if (intertnaltypes == nullptr)
 	{
@@ -323,7 +508,7 @@ ClassScopeMetaInformation::~ClassScopeMetaInformation()
 	for (size_t i = 0; i < existedVariables.size(); i++)
 	{
 		intertnaltypes->push_back(existedVariables[i]);
-		resultSize += existedVariables[i]->getType().getSize();
+		resultSize += existedVariables[i]->getType()->getSize();
 	}
 	currentT->setSize(resultSize);
 }
@@ -335,7 +520,7 @@ void ClassScopeMetaInformation::pushFunction(Function* f)
 	//existedFunctions.push_back(f);
 }
 
-void ClassScopeMetaInformation::pushType(Type* t)
+void ClassScopeMetaInformation::pushType(BasicAbstractType* t)
 {
 	existedTypes.push_back(t);
 }
@@ -356,7 +541,7 @@ FunctionScopeMetaInformation::~FunctionScopeMetaInformation()
 	size_t resultSize = 0;
 	for (Variable* var : existedVariables)
 	{
-		resultSize += var->getType().getSize();
+		resultSize += var->getType()->getSize();
 	}
 	basicFunction->setStackSize(resultSize);
 }
@@ -369,7 +554,7 @@ void FunctionScopeMetaInformation::pushFunction(Function* f)
 	//existedFunctions.push_back(f);
 }
 
-void FunctionScopeMetaInformation::pushType(Type* t)
+void FunctionScopeMetaInformation::pushType(BasicAbstractType* t)
 {
 	existedTypes.push_back(t);
 }
@@ -413,13 +598,13 @@ AbstractScopeMetaInformation* MetaInformaton::back()
 	return metaStack.back();
 }
 
-Type* MetaInformaton::getTypeByName(wstring name)
+BasicAbstractType* MetaInformaton::getTypeByName(wstring name)
 {
-	Type* result = nullptr;
+	BasicAbstractType* result = nullptr;
 
 	for (AbstractScopeMetaInformation* meta : metaStack)
 	{
-		vector<Type*>& types = meta->getExistedTypes();
+		vector<BasicAbstractType*>& types = meta->getExistedTypes();
 		for (size_t i = 0; i < types.size(); i++)
 		{
 			if (types[i]->getName() == name)
@@ -501,13 +686,13 @@ MetaInformaton::MetaInformaton()
 {
 	AbstractScopeMetaInformation* toplevel = new GlobalScopeMetaInformation();
 
-	toplevel->pushType(new Type(L"char", 1, true));
-	toplevel->pushType(new Type(L"bool", 1, true));
-	toplevel->pushType(new Type(L"short", 2, true));
-	toplevel->pushType(new Type(L"int", 4, true));
-	toplevel->pushType(new Type(L"float", 4, true));
-	toplevel->pushType(new Type(L"double", 4, true));
-	toplevel->pushType(new Type(L"long", 8, true));
+	toplevel->pushType(new PrimitiveType(L"char", 1));
+	toplevel->pushType(new PrimitiveType(L"bool", 1));
+	toplevel->pushType(new PrimitiveType(L"short", 2));
+	toplevel->pushType(new PrimitiveType(L"int", 4));
+	toplevel->pushType(new PrimitiveType(L"float", 4));
+	toplevel->pushType(new PrimitiveType(L"double", 4));
+	toplevel->pushType(new PrimitiveType(L"long", 8));
 
 	this->pushScope(toplevel);
 }

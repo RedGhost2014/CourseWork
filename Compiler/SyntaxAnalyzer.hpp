@@ -1,19 +1,21 @@
 #pragma once
-#include "AST.hpp"
 #include "Log.hpp"
 #include "MetaInfo.hpp"
 #include "ALT.hpp"
 
-//class AbstractSyntaxTree;
-//class AbstractLexicTree;
+class AbstractSyntaxTree;
 
 class SyntaxAnalyzer
 {
 public:
-	SyntaxAnalyzer() = default;
+	SyntaxAnalyzer();
+
 	~SyntaxAnalyzer() = default;
 
+	void addSourceFileToAST(File* files);
+
 	AbstractSyntaxTree* detachTree();
+	AbstractSyntaxTree* getTree();
 	void consumeLexicTree(AbstractLexicTree* alt);
 
 private:
@@ -47,7 +49,7 @@ private:
 	bool isFunctionDeclarator(vector<LexicalUnit*>& lexicrow);
 	void parseFunctionParentheses(vector<LexicalUnit*>& internalLexicRow, vector<Variable*>& functionArgumentsToFill);
 
-	Type* retrieveType(vector<LexicalUnit*>& lexicrow, size_t* countOfParsedUnits);
+	BasicAbstractType* retrieveType(vector<LexicalUnit*>& lexicrow, size_t* countOfParsedUnits);
 
 
 	AbstractSyntaxTree* tree;

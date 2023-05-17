@@ -7,13 +7,28 @@
 
 using namespace std;
 
-class SyntaxUnit;
+
+class SyntaxUnit : public IName
+{
+public:
+	SyntaxUnit() = default;
+	virtual ~SyntaxUnit() = default;
+
+	vector<SyntaxUnit*>& getBranch();
+	void push(SyntaxUnit*);
+
+protected:
+	vector<SyntaxUnit*> branch;
+};
 
 class AbstractSyntaxTree
 {
 public:
 	AbstractSyntaxTree() = default;
 	~AbstractSyntaxTree() = default;
+
+	SyntaxUnit& getHead();
+	void push(SyntaxUnit*);
 //
 //	void bypassLexicTree(LexicalUnit* head);
 //	void consumeLexicTree(AbstractLexicTree* alt);
@@ -23,30 +38,85 @@ public:
 //	void adjustTypes(vector<LexicalUnit*>& lexicrow);
 //	
 private:
-	SyntaxUnit* head;
+	SyntaxUnit head;
+	vector<vector<SyntaxUnit*>*> stack;
 };
 
-
-class SyntaxUnit : public IName
+class TranslationUnit : public SyntaxUnit
 {
 public:
-	SyntaxUnit() = default;
-	~SyntaxUnit() = default;
-
-protected:
-	vector<SyntaxUnit*> branch;
+	TranslationUnit() { name = L"TranslationUnit"; }
 };
 
-class VarDeclRef : public SyntaxUnit
+class CompoundStatement : public SyntaxUnit
 {
 public:
-	VarDeclRef()
+	CompoundStatement() { name = L"CompoundStatement"; }
+};
+
+class OperatorReference : public SyntaxUnit
+{
+public:
+	OperatorReference() { name = L"OperatorReference"; }
+	void setOperatorValue(Operator* op);
+private:
+	Operator* op;
+};
+
+class VariableDeclReference : public SyntaxUnit
+{
+public:
+	VariableDeclReference()
 	{ 
-		name = L"VarDeclRef";
+		name = L"VarRef";
 	};
 
-	void setVar(Variable* var);
+	void setVariable(Variable* var);
 
 private:
 	Variable* var;
+};
+
+class FunctionDeclReference : public SyntaxUnit
+{
+public:
+	FunctionDeclReference()
+	{
+		name = L"FunDeclRef";
+	};
+
+	void setFunction(Function* f);
+
+private:
+	Function* function;
+};
+
+class FunctionCallReference : public SyntaxUnit
+{
+public:
+	FunctionCallReference()
+	{
+		name = L"FunCallRef";
+	};
+
+	void setFunction(Function* f);
+
+private:
+	Function* function;
+};
+
+
+class ConstantDeclReference : public SyntaxUnit
+{
+public:
+	ConstantDeclReference()
+	{
+		name = L"ConstantRef";
+	};
+
+	void setConstant(wstring constant);
+	void setType(BasicAbstractType* t);
+private:
+	wstring constant;
+	BasicAbstractType* constantType;
 };

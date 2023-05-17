@@ -4,64 +4,82 @@
 2  |	{	   <Operator>
 3  |		int	   <Keyword>
 3  |		real	   <Identifier>
+3  |		=	   <Operator>
+3  |		5	   <Number>
 3  |		;	   <End line>
 4  |		int	   <Keyword>
 4  |		image	   <Identifier>
+4  |		=	   <Operator>
 4  |		;	   <End line>
-5  |	}	   <Operator>
-5  |	;	   <End line>
-7  |	int	   <Keyword>
-7  |	,	   <Operator>
-7  |	f1	   <Identifier>
-7  |	(	   <Operator>
-7  |	)	   <Operator>
-8  |	{	   <Operator>
-9  |		int	   <Keyword>
-9  |		tmp	   <Identifier>
-9  |		;	   <End line>
-10  |	}	   <Operator>
-12  |	int	   <Keyword>
-12  |	f	   <Identifier>
-12  |	(	   <Operator>
-12  |		const	   <Keyword>
-12  |		char	   <Keyword>
-12  |		*	   <Operator>
-12  |		name	   <Identifier>
-12  |		,	   <Operator>
+5  |		int	   <Keyword>
+5  |		somth	   <Identifier>
+5  |		=	   <Operator>
+5  |		123	   <Number>
+5  |		;	   <End line>
+6  |	}	   <Operator>
+6  |	;	   <End line>
+8  |	int	   <Keyword>
+8  |	x	   <Identifier>
+8  |	=	   <Operator>
+8  |	5	   <Number>
+8  |	;	   <End line>
+10  |	int	   <Keyword>
+10  |	,	   <Operator>
+10  |	f1	   <Identifier>
+10  |	(	   <Operator>
+10  |	)	   <Operator>
+11  |	{	   <Operator>
 12  |		int	   <Keyword>
-12  |		,	   <Operator>
-12  |		short	   <Keyword>
-12  |		myshort	   <Identifier>
-12  |	)	   <Operator>
-13  |	{	   <Operator>
-14  |		int	   <Keyword>
-14  |		x	   <Identifier>
-14  |		;	   <End line>
+12  |		tmp	   <Identifier>
+12  |		;	   <End line>
+13  |	}	   <Operator>
+15  |	int	   <Keyword>
+15  |	f	   <Identifier>
+15  |	(	   <Operator>
+15  |		const	   <Keyword>
+15  |		char	   <Keyword>
+15  |		*	   <Operator>
+15  |		name	   <Identifier>
+15  |		,	   <Operator>
+15  |		int	   <Keyword>
+15  |		,	   <Operator>
 15  |		short	   <Keyword>
-15  |		y	   <Identifier>
-15  |		;	   <End line>
-16  |	}	   <Operator>
-18  |	int	   <Keyword>
-18  |	,	   <Operator>
-18  |	char	   <Keyword>
-18  |	f	   <Identifier>
-18  |	(	   <Operator>
-18  |		const	   <Keyword>
-18  |		char	   <Keyword>
-18  |		*	   <Operator>
-18  |		name	   <Identifier>
-18  |	)	   <Operator>
-19  |	{	   <Operator>
-20  |		int	   <Keyword>
-20  |		tmp	   <Identifier>
-20  |		;	   <End line>
-21  |	}	   <Operator>
-24  |	int	   <Keyword>
-24  |	main	   <Identifier>
-24  |	(	   <Operator>
-24  |	)	   <Operator>
-25  |	{	   <Operator>
-28  |		return	   <Keyword>
-28  |		42	   <Number>
-28  |		;	   <End line>
-29  |	}	   <Operator>
+15  |		myshort	   <Identifier>
+15  |	)	   <Operator>
+16  |	{	   <Operator>
+17  |		const	   <Keyword>
+17  |		unsigned	   <Keyword>
+17  |		Complex	   <Identifier>
+17  |		s	   <Identifier>
+17  |		;	   <End line>
+18  |		int	   <Keyword>
+18  |		x	   <Identifier>
+18  |		;	   <End line>
+19  |		short	   <Keyword>
+19  |		y	   <Identifier>
+19  |		;	   <End line>
+20  |	}	   <Operator>
+22  |	int	   <Keyword>
+22  |	,	   <Operator>
+22  |	char	   <Keyword>
+22  |	f	   <Identifier>
+22  |	(	   <Operator>
+22  |		const	   <Keyword>
+22  |		char	   <Keyword>
+22  |		*	   <Operator>
+22  |		name	   <Identifier>
+22  |	)	   <Operator>
+23  |	{	   <Operator>
+24  |		int	   <Keyword>
+24  |		tmp	   <Identifier>
+24  |		;	   <End line>
+25  |	}	   <Operator>
+28  |	int	   <Keyword>
+28  |	main	   <Identifier>
+28  |	(	   <Operator>
+28  |	)	   <Operator>
+29  |	{	   <Operator>
+32  |		return	   <Keyword>
+32  |		42	   <Number>
+32  |		;	   <End line>
+33  |	}	   <Operator>
