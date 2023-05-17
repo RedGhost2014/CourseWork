@@ -1,17 +1,5 @@
 #include "File.hpp"
 
-
-File& File::setName(wstring name)
-{
-	m_name = name;
-	return *this;
-}
-
-wstring File::getName()
-{
-	return m_name;
-}
-
 File& File::setExistState(bool state)
 {
 	m_isExist = state;
@@ -25,5 +13,5 @@ bool File::isExist()
 
 void File::dbgprint()
 {
-	wcout << this->m_name << L"(" << m_isExist << L")";
+	wcout << this->name << L"(" << m_isExist << L")";
 }

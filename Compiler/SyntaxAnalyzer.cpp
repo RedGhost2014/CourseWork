@@ -1,4 +1,17 @@
 #include "SyntaxAnalyzer.hpp"
+#include "AST.hpp"
+
+SyntaxAnalyzer::SyntaxAnalyzer()
+{
+	this->tree = new AbstractSyntaxTree;
+}
+
+void SyntaxAnalyzer::addSourceFileToAST(File* f)
+{
+	SyntaxUnit* su = new SyntaxUnit;
+	su->setName(f->getName());
+	tree->getHead().getBranch().push_back(su);
+}
 
 void SyntaxAnalyzer::consumeLexicTree(AbstractLexicTree* alt)
 {
@@ -10,6 +23,11 @@ AbstractSyntaxTree* SyntaxAnalyzer::detachTree()
 	AbstractSyntaxTree* currenttree = this->tree;
 	this->tree = nullptr;
 	return currenttree;
+}
+
+AbstractSyntaxTree* SyntaxAnalyzer::getTree()
+{
+	return tree;
 }
 
 void SyntaxAnalyzer::bypassLexicTree(LexicalUnit* head)
@@ -136,7 +154,7 @@ bool SyntaxAnalyzer::isDefinition(vector<LexicalUnit*>& lexicrow)
 	return lexicrow.back()->getValue() == L"{";
 }
 
-Type* SyntaxAnalyzer::retrieveType(vector<LexicalUnit*>& lexicrow, size_t* countOfParsedUnits)
+BasicAbstractType* SyntaxAnalyzer::retrieveType(vector<LexicalUnit*>& lexicrow, size_t* countOfParsedUnits)
 {
 	bool isStatic = false;
 	bool isRef = false;
@@ -145,7 +163,7 @@ Type* SyntaxAnalyzer::retrieveType(vector<LexicalUnit*>& lexicrow, size_t* count
 	size_t countOfVolatile = 0;
 	size_t countOfPtrs = 0;
 	size_t countOfConst = 0;
-	Type* pureType = nullptr;
+	BasicAbstractType* pureType = nullptr;
 	LexicalUnit* pureTypeName = nullptr;
 
 	// resulted count of parsed lexical units also stands for start position for next parse
@@ -196,16 +214,27 @@ Type* SyntaxAnalyzer::retrieveType(vector<LexicalUnit*>& lexicrow, size_t* count
 		i++;
 	}
 
-	// TODO: rewrite type classification to Composite / Primitive?
+	if (pureType == nullptr)
+	{
+		return nullptr;
+	}
+
+	if (dynamic_cast<PrimitiveType*>(MetaInfo.getTypeByName(pureTypeName->getValue())) && countOfUnsigned > 1)
+	{
+		countOfUnsigned = 1;
+		Log::pushWarning(L"Qualififer \"unsigned\" repeated more that 1 time.", lexicrow[0]);
+	}
+	else if (dynamic_cast<CompositeType*>(MetaInfo.getTypeByName(pureTypeName->getValue())) && countOfUnsigned > 0)
+	{
+		countOfUnsigned = 0;
+		Log::pushWarning(L"Qualififer \"unsigned\" can be over Composite Type but does nothing.", lexicrow[0]);
+	}
+
+
 	if (countOfConst > 1)
 	{
 		countOfConst = 1;
 		Log::pushWarning(L"Qualififer \"const\" repeated more that 1 time.", lexicrow[0]);
-	}
-	if (countOfUnsigned > 1)
-	{
-		countOfUnsigned = 1;
-		Log::pushWarning(L"Qualififer \"unsigned\" repeated more that 1 time.", lexicrow[0]);
 	}
 	if (countOfVolatile > 1)
 	{
@@ -247,24 +276,36 @@ Type* SyntaxAnalyzer::retrieveType(vector<LexicalUnit*>& lexicrow, size_t* count
 		}
 		i++;
 	}
-	if (!pureType)
-		return nullptr;
-	Type* actualType = new Type(*pureType);
-	actualType->setIsCountOfPtrs(countOfPtrs);
+
+	BasicAbstractType* newType = nullptr;
+	
+	if (dynamic_cast<PrimitiveType*>(MetaInfo.getTypeByName(pureTypeName->getValue())))
+	{
+		newType = new PrimitiveType;
+		PrimitiveType* primitive = dynamic_cast<PrimitiveType*>(newType);
+
+		if (countOfUnsigned > 0)
+			primitive->setIsUnsigned(true);
+	}
+	else if (dynamic_cast<CompositeType*>(MetaInfo.getTypeByName(pureTypeName->getValue())))
+	{
+		newType = new CompositeType;
+	}
+
+	newType->setIsCountOfPtrs(countOfPtrs);
 	if (countOfPtrs > 0)
-		actualType->setSize(4);
+		newType->setSize(4);
 	if (countOfConst > 0)
-		actualType->setIsConst(true);
-	if (countOfUnsigned > 0)
-		actualType->setIsUnsigned(true);
+		newType->setIsConst(true);
 	if (countOfVolatile > 0)
-		actualType->setIsVolatile(true);
-	if (isRef)
-		actualType->setIsRef(true);
+		newType->setIsVolatile(true);
+
+	newType->setIsRef(isRef);
+	newType->setIsStatic(isStatic);
 
 	*countOfParsedUnits = i;
 
-	return actualType;
+	return newType;
 }
 
 bool SyntaxAnalyzer::isTypedefDeclarator(vector<LexicalUnit*>& lexicrow)
@@ -277,7 +318,7 @@ bool SyntaxAnalyzer::isTypedefDeclarator(vector<LexicalUnit*>& lexicrow)
 	lexicrow.erase(lexicrow.begin());
 
 	size_t countOfParsed = 0;
-	Type* what = retrieveType(lexicrow, &countOfParsed);
+	BasicAbstractType* what = retrieveType(lexicrow, &countOfParsed);
 
 	if (what == nullptr)
 		return false;
@@ -311,23 +352,24 @@ bool SyntaxAnalyzer::isClassDeclarator(vector<LexicalUnit*>& lexicrow)
 		{
 			wstring name = lexicrow[1]->getValue();
 			if (MetaInfo.getTypeByName(name) == nullptr)
-				MetaInfo.back()->pushType(new Type(name));
+				MetaInfo.back()->pushType(new CompositeType(name));
 			return true;
 		}
 		else if (expectValue(lexicrow[2], L"{"))
 		{
 			wstring name = lexicrow[1]->getValue();
-			Type* t = MetaInfo.getTypeByName(name);
+			BasicAbstractType* t = MetaInfo.getTypeByName(name);
+			CompositeType* actualT = dynamic_cast<CompositeType*>(t);
 			if (t == nullptr)
 			{
-				t = new Type(name);
-				MetaInfo.back()->pushType(t);
+				actualT = new CompositeType(name);
+				MetaInfo.back()->pushType(actualT);
 			}
-			else if (t->isDefined())
+			else if (actualT && actualT->isDefined())
 			{
 				Log::pushError(L"Type already defined.", lexicrow[1]);
 			}
-			t->setIsDefined(true);
+			actualT->setIsDefined(true);
 
 			AbstractScopeMetaInformation* scope = new ClassScopeMetaInformation(lexicrow[1]);
 			MetaInfo.pushScope(scope);
@@ -348,7 +390,7 @@ bool SyntaxAnalyzer::isClassDeclarator(vector<LexicalUnit*>& lexicrow)
 
 			wstring name = lexicrow[1]->getValue();
 			if (!MetaInfo.getTypeByName(name))
-				MetaInfo.back()->pushType(new Type(name));
+				MetaInfo.back()->pushType(new CompositeType(name));
 			return true;
 		}
 		else
@@ -360,7 +402,7 @@ bool SyntaxAnalyzer::isClassDeclarator(vector<LexicalUnit*>& lexicrow)
 bool SyntaxAnalyzer::isVariableDeclarator(vector<LexicalUnit*>& lexicrow)
 {
 	size_t i = 0;
-	Type* t = retrieveType(lexicrow, &i);
+	BasicAbstractType* t = retrieveType(lexicrow, &i);
 	if (t == nullptr)
 	{
 		return false;
@@ -383,10 +425,26 @@ bool SyntaxAnalyzer::isVariableDeclarator(vector<LexicalUnit*>& lexicrow)
 		Variable* var = new Variable;
 		var->setName(lexicrow[i]->getValue());
 
-		var->setType(*t);
-		delete t;
+		var->setType(t);
 
 		MetaInfo.back()->pushVariable(var);
+
+		if (expectValue(lexicrow[j], L"="))
+		{	
+			if (dynamic_cast<ClassScopeMetaInformation*>(MetaInfo.back()))
+			{
+				Log::pushError(L"Assigment does not allowed in class declaration.", lexicrow[j]);
+				return true;
+			}
+
+			VariableDeclReference* varRef = new VariableDeclReference;
+			varRef->setVariable(var);
+			this->getTree()->push(varRef);
+
+			CompoundStatement* cs = new CompoundStatement;
+			this->getTree()->push(cs);
+		}
+
 		return true;
 	}
 
@@ -408,21 +466,19 @@ void SyntaxAnalyzer::parseFunctionParentheses(vector<LexicalUnit*>& internalLexi
 
 	while (parseIndex < internalLexicRow.size())
 	{
-		Type* t = retrieveType(internalLexicRow, &parseIndex);
+		BasicAbstractType* t = retrieveType(internalLexicRow, &parseIndex);
 
 		if (t == nullptr)
 			break;
 
 		Variable* var = new Variable;
-		var->setType(*t);
+		var->setType(t);
 
 		if (expectKey(internalLexicRow[parseIndex], L"Identifier"))
 		{
 			var->setName(internalLexicRow[parseIndex]->getValue());
 			parseIndex++;
 		}
-
-		delete t;
 
 		functionArgumentsToFill.push_back(var);
 	}
@@ -434,7 +490,7 @@ bool SyntaxAnalyzer::isFunctionDeclarator(vector<LexicalUnit*>& lexicrow)
 	static bool isFixit = false;
 
 	size_t i = 0;
-	Type* mainType = retrieveType(lexicrow, &i);
+	BasicAbstractType* mainType = retrieveType(lexicrow, &i);
 
 	if (mainType == nullptr)
 	{
@@ -495,7 +551,7 @@ bool SyntaxAnalyzer::isFunctionDeclarator(vector<LexicalUnit*>& lexicrow)
 		else if (expectValue(lexicrow[i], L","))
 		{
 			i++;
-			Type* additionalType = retrieveType(lexicrow, &i);
+			BasicAbstractType* additionalType = retrieveType(lexicrow, &i);
 			if (additionalType == nullptr)
 			{
 				Log::pushError(ErrorMessage::syntaxError + L"Additional type expected.", lexicrow[i]);

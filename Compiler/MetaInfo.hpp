@@ -7,54 +7,85 @@
 
 using namespace std;
 
-class Type;
 class Variable;
 
-
-class Type : public IName
+class BasicAbstractType : public IName
 {
 public:
-	Type();
-	Type(wstring name);
-	Type(wstring name, size_t size);
-	Type(wstring name, size_t size, bool);
+	BasicAbstractType() = default;
+	virtual ~BasicAbstractType() = default;
 
+	virtual BasicAbstractType* clone() = 0;
 
-	Type(const Type&);
-	Type& operator=(const Type&);
-
-
-	~Type() = default;
-
-	void setSize(size_t _size);
-
-	Type& setIsConst(bool);
-	Type& setIsUnsigned(bool);
-	Type& setIsVolatile(bool);
-	Type& setIsRef(bool);
-	Type& setIsDefined(bool);
-	Type& setIsCountOfPtrs(size_t);
-
-	bool isDefined();
+	vector<wstring>& getSynonims();
 
 	size_t getSize();
-	vector<wstring>& getSynonims();
-	vector<Variable*>* getInternal();
+	void setSize(size_t _size);
 
-private:
+	void setIsStatic(bool);
+	void setIsConst(bool);
+	void setIsRef(bool);
+	void setIsCountOfPtrs(size_t);
+	void setIsVolatile(bool);
 
-	vector<Variable*>* internalTypes;
+protected:
 	vector<wstring> synonyms;
+	
 	size_t size;
 
 	size_t countOfPtrs;
 	bool m_isConst;
 	bool m_isRef;
+	bool m_isStatic;
 	bool m_isVolatile;
-	bool m_isUnsigned;
-
-	bool m_isDefined;
 };
+
+class PrimitiveType : public BasicAbstractType
+{
+public:
+	PrimitiveType();
+	~PrimitiveType() = default;
+
+	PrimitiveType(const PrimitiveType& rhs);
+	PrimitiveType(wstring name);
+	PrimitiveType(wstring name, size_t size);
+
+	PrimitiveType& operator=(const PrimitiveType& rhs);
+
+	PrimitiveType* clone() override;
+
+	void setIsUnsigned(bool);
+
+private:
+
+	bool m_isUnsigned;
+};
+
+class CompositeType : public BasicAbstractType 
+{
+public:
+	CompositeType();
+	CompositeType(wstring name);
+	~CompositeType();
+
+
+	CompositeType(const CompositeType& rhs);
+	CompositeType& operator=(const CompositeType& rhs);
+
+	bool isDefined();
+	void setIsDefined(bool);
+
+	CompositeType* clone() override;
+	vector<Variable*>* getInternal();
+
+private:
+	bool m_isDefined;
+	vector<Variable*>* internalTypes;
+
+};
+
+
+
 
 class Variable : public IName
 {
@@ -62,11 +93,13 @@ public:
 	Variable() = default;
 	~Variable() = default;
 
-	Type& getType();
-	void setType(Type&);
+	Variable(const Variable& rhs);
+
+	BasicAbstractType* getType();
+	void setType(BasicAbstractType*);
 
 private:
-	Type type;
+	BasicAbstractType* type;
 };
 
 
@@ -87,7 +120,7 @@ public:
 	Function();
 	~Function() = default;
 
-	vector<Type*>& getReturnTypes();
+	vector<BasicAbstractType*>& getReturnTypes();
 	vector<Variable*>& getFunctionArguments();
 	vector<Function*>& getFunctionOverloads();
 
@@ -100,7 +133,7 @@ private:
 	bool m_isDefined;
 	size_t stackSize;
 	vector<Function*> functionOverloads;
-	vector<Type*> returnTypes;
+	vector<BasicAbstractType*> returnTypes;
 	vector<Variable*> functionArguments;
 };
 
@@ -116,14 +149,14 @@ public:
 	// IPush
 	virtual void pushFunction(Function*) {};
 	virtual void pushVariable(Variable*) {};
-	virtual void pushType(Type*) {};
+	virtual void pushType(BasicAbstractType*) {};
 
-	vector<Type*>& getExistedTypes();
+	vector<BasicAbstractType*>& getExistedTypes();
 	vector<Variable*>& getExistedVariables();
 	vector<Function*>& getExistedFunctions();
 
 protected:
-	vector<Type*> existedTypes;
+	vector<BasicAbstractType*> existedTypes;
 	vector<Variable*> existedVariables;
 	vector<Function*> existedFunctions;
 };
@@ -138,7 +171,7 @@ public:
 
 	void pushFunction(Function*) override;
 	void pushVariable(Variable*) override;
-	void pushType(Type*) override;
+	void pushType(BasicAbstractType*) override;
 };
 
 class GlobalScopeMetaInformation : public AbstractScopeMetaInformation
@@ -149,7 +182,7 @@ public:
 
 	void pushFunction(Function*) override;
 	void pushVariable(Variable*) override;
-	void pushType(Type*) override;
+	void pushType(BasicAbstractType*) override;
 
 };
 
@@ -166,7 +199,7 @@ public:
 
 	void pushFunction(Function*) override;
 	void pushVariable(Variable*) override;
-	void pushType(Type*) override;
+	void pushType(BasicAbstractType*) override;
 };
 
 class TempScopeMetaInformation : public AbstractScopeMetaInformation
@@ -177,7 +210,7 @@ public:
 
 	void pushFunction(Function*) override;
 	void pushVariable(Variable*) override;
-	void pushType(Type*) override;
+	void pushType(BasicAbstractType*) override;
 };
 
 
@@ -192,7 +225,7 @@ public:
 	AbstractScopeMetaInformation* back();
 
 	Variable* getVariableByName(wstring name);
-	Type* getTypeByName(wstring name);
+	BasicAbstractType* getTypeByName(wstring name);
 	Function* getFunctionByName(wstring name);
 
 	vector<AbstractScopeMetaInformation*>& getMetaStack();

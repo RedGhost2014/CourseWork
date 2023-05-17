@@ -69,9 +69,9 @@ wchar_t* GetWC(const char* c)
 //	vector<AbstractDebugger*> debuggers;
 //};
 
-
 int main(int argc, char* argv[])
 {
+	//return 0;
 	/*Debug debugmachine;
 	debugmachine.pushDebugger(new ConsoleDebugger);
 	debugmachine.pushDebugger(new NullDebugger);
@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
 	_wsetlocale(LC_ALL, L"Rus");
 
 	// "--astrace" - ¬ывод лексического дерева разбора в консоль
-	// "--fixit" - »справить точки с зап€той
+	// "--fixit" - »справить пропущенные точки с зап€той
 
 
 	const wchar_t* argvectors[] =
@@ -107,10 +107,10 @@ int main(int argc, char* argv[])
 	Settings settings;
 
 
-	vector<File*> v = settings.parse((WCHAR**)argvectors, count).getSourceFiles();
+	vector<File*> inputFiles = settings.parse((WCHAR**)argvectors, count).getSourceFiles();
 	settings.dbgprint();
 
-	for (File* f : v)
+	for (File* f : inputFiles)
 	{
 		f->dbgprint();
 		cout << endl;
@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
 	Tokenizer t;
 	vector<AbstractLexicTree*> trees;
 
-	for (File* f : v)
+	for (File* f : inputFiles)
 	{
 		AbstractLexicTree* alt = new AbstractLexicTree;
 		trees.push_back(alt);
@@ -154,11 +154,17 @@ int main(int argc, char* argv[])
 		}
 	}
 
-
 	wcout << "\n\n\n" << endl;
 
 	SyntaxAnalyzer SA;
-	SA.consumeLexicTree(trees[0]);
+
+	for (size_t i = 0; i < inputFiles.size(); i++)
+	{
+		SA.addSourceFileToAST(inputFiles[i]);
+		SA.consumeLexicTree(trees[i]);
+	}
+
+	
 
 	Log::print(L"cout");
 	Log::print(L"log.txt");

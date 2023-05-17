@@ -28,9 +28,6 @@
     <Filter Include="Исходные файлы\Log">
       <UniqueIdentifier>{e06417b1-4e0e-4b57-9ae8-675bf948d284}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Исходные файлы\SemanticTree">
-      <UniqueIdentifier>{d6116c16-8799-4ee6-bb88-7521705966a3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Исходные файлы\MetaInfo">
       <UniqueIdentifier>{821bfab9-e521-4b55-9d0c-e7c6e651ea77}</UniqueIdentifier>
     </Filter>
@@ -39,6 +36,9 @@
     </Filter>
     <Filter Include="Исходные файлы\ALT">
       <UniqueIdentifier>{44c839e0-2a53-49c9-808b-fcf80d3ccf79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\AbstractSyntaxTree">
+      <UniqueIdentifier>{d6116c16-8799-4ee6-bb88-7521705966a3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -61,7 +61,7 @@
       <Filter>Исходные файлы\Log</Filter>
     </ClInclude>
     <ClInclude Include="AST.hpp">
-      <Filter>Исходные файлы\SemanticTree</Filter>
+      <Filter>Исходные файлы\AbstractSyntaxTree</Filter>
     </ClInclude>
     <ClInclude Include="MetaInfo.hpp">
       <Filter>Исходные файлы\MetaInfo</Filter>
@@ -100,6 +100,9 @@
     </ClCompile>
     <ClCompile Include="SyntaxAnalyzer.cpp">
       <Filter>Исходные файлы\SyntaxAnalyzer</Filter>
+    </ClCompile>
+    <ClCompile Include="AST.cpp">
+      <Filter>Исходные файлы\AbstractSyntaxTree</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

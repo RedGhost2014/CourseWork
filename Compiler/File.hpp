@@ -1,16 +1,15 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include "IName.hpp"
+
 using namespace std;
 
-class File
+class File : public IName
 {
 public:
 	File() = default;
 	~File() = default;
-
-	File& setName(wstring name);
-	wstring getName();
 
 	File& setExistState(bool);
 	bool isExist();
@@ -19,6 +18,5 @@ public:
 
 private:
 	bool m_isExist;
-	wstring m_name;
 	wstring m_path;
 };
