@@ -34,11 +34,17 @@
     <Filter Include="Исходные файлы\SyntaxAnalyzer">
       <UniqueIdentifier>{6137a02c-e549-43e7-b746-0ce031c5dca8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Исходные файлы\ALT">
-      <UniqueIdentifier>{44c839e0-2a53-49c9-808b-fcf80d3ccf79}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Исходные файлы\AbstractSyntaxTree">
       <UniqueIdentifier>{d6116c16-8799-4ee6-bb88-7521705966a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Preprocessor">
+      <UniqueIdentifier>{6877aa03-1fc5-42a3-b85b-5e30dc77a898}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\RPNCreator">
+      <UniqueIdentifier>{e71bc014-a8ec-4a71-aaa7-ce828085b57d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\AbstractLexicTree">
+      <UniqueIdentifier>{44c839e0-2a53-49c9-808b-fcf80d3ccf79}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -55,7 +61,7 @@
       <Filter>Исходные файлы\Tokenizer</Filter>
     </ClInclude>
     <ClInclude Include="ALT.hpp">
-      <Filter>Исходные файлы\ALT</Filter>
+      <Filter>Исходные файлы\AbstractLexicTree</Filter>
     </ClInclude>
     <ClInclude Include="Log.hpp">
       <Filter>Исходные файлы\Log</Filter>
@@ -68,6 +74,12 @@
     </ClInclude>
     <ClInclude Include="IName.hpp">
       <Filter>Исходные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="Preprocessor.hpp">
+      <Filter>Исходные файлы\Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="RPNCreator.hpp">
+      <Filter>Исходные файлы\RPNCreator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -87,7 +99,7 @@
       <Filter>Исходные файлы\Tokenizer</Filter>
     </ClCompile>
     <ClCompile Include="ALT.cpp">
-      <Filter>Исходные файлы\ALT</Filter>
+      <Filter>Исходные файлы\AbstractLexicTree</Filter>
     </ClCompile>
     <ClCompile Include="Log.cpp">
       <Filter>Исходные файлы\Log</Filter>
@@ -103,6 +115,12 @@
     </ClCompile>
     <ClCompile Include="AST.cpp">
       <Filter>Исходные файлы\AbstractSyntaxTree</Filter>
+    </ClCompile>
+    <ClCompile Include="Preprocessor.cpp">
+      <Filter>Исходные файлы\Preprocessor</Filter>
+    </ClCompile>
+    <ClCompile Include="RPNCreator.cpp">
+      <Filter>Исходные файлы\RPNCreator</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

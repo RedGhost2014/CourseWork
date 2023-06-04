@@ -6,6 +6,7 @@
 #include "AST.hpp"
 #include "Log.hpp"
 #include "MetaInfo.hpp"
+#include "Preprocessor.hpp"
 #include "SyntaxAnalyzer.hpp"
 
 wchar_t* GetWC(const char* c)
@@ -14,7 +15,7 @@ wchar_t* GetWC(const char* c)
 	wchar_t* wc = new wchar_t[cSize];
 
 	size_t num = 0;
-	
+
 	mbstowcs_s(&num, wc, cSize, c, cSize);
 
 	return wc;
@@ -71,7 +72,6 @@ wchar_t* GetWC(const char* c)
 
 int main(int argc, char* argv[])
 {
-	//return 0;
 	/*Debug debugmachine;
 	debugmachine.pushDebugger(new ConsoleDebugger);
 	debugmachine.pushDebugger(new NullDebugger);
@@ -80,10 +80,12 @@ int main(int argc, char* argv[])
 
 	return 0;*/
 
+
 	SetConsoleCP(1251);
 	_wsetlocale(LC_ALL, L"Rus");
 
-	// "--astrace" - ¬ывод лексического дерева разбора в консоль
+	// "--ltrace" - ¬ывод лексического дерева разбора
+	// "--strace" - ¬ывод синтаксического дерева разбора
 	// "--fixit" - »справить пропущенные точки с зап€той
 
 
@@ -93,10 +95,10 @@ int main(int argc, char* argv[])
 		L"somecode.c",
 		//L"Hello World.i",
 		//L"test.c",
-		L"--astrace",
+		L"--ltrace",
 	};
 	size_t count = sizeof(argvectors) / sizeof(wchar_t*);
-	
+
 	/*WCHAR** argvectors = new WCHAR*[argc];
 	for (size_t i = 0; i < argc; i++)
 	{
@@ -106,15 +108,24 @@ int main(int argc, char* argv[])
 	*/
 	Settings settings;
 
-
 	vector<File*> inputFiles = settings.parse((WCHAR**)argvectors, count).getSourceFiles();
-	settings.dbgprint();
+	//settings.dbgprint();
 
-	for (File* f : inputFiles)
+
+	/*for (File* f : inputFiles)
 	{
 		f->dbgprint();
 		cout << endl;
+	}*/
+
+	Preprocessor preprocessor;
+
+	for (File* f : inputFiles)
+	{
+		f->setName(preprocessor.open(f->getName()).parse().close().getPreprocessedFilename());
 	}
+
+	//return 0;
 
 	Tokenizer t;
 	vector<AbstractLexicTree*> trees;
@@ -142,7 +153,7 @@ int main(int argc, char* argv[])
 		alt->checkBracketBalance();
 	}
 
-	if (settings.isContainFlag(L"--astrace"))
+	if (settings.isContainFlag(L"--ltrace"))
 	{
 		wofstream f;
 		f.open(L"astrace.txt");
@@ -164,7 +175,8 @@ int main(int argc, char* argv[])
 		SA.consumeLexicTree(trees[i]);
 	}
 
-	
+	wcout << "\n\n\n" << endl;
+	SA.getTree()->print();
 
 	Log::print(L"cout");
 	Log::print(L"log.txt");

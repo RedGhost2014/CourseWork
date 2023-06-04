@@ -8,7 +8,17 @@
 using namespace std;
 
 
-class SyntaxUnit : public IName
+class ISignature
+{
+public:
+	wstring getSignature();
+	void setSignature(wstring _signature);
+
+protected:
+	wstring signature;
+};
+
+class SyntaxUnit : public IName, public ISignature
 {
 public:
 	SyntaxUnit() = default;
@@ -17,6 +27,8 @@ public:
 	vector<SyntaxUnit*>& getBranch();
 	void push(SyntaxUnit*);
 
+	virtual void print() { wcout << name; };
+
 protected:
 	vector<SyntaxUnit*> branch;
 };
@@ -24,20 +36,18 @@ protected:
 class AbstractSyntaxTree
 {
 public:
-	AbstractSyntaxTree() = default;
+	AbstractSyntaxTree();
 	~AbstractSyntaxTree() = default;
 
 	SyntaxUnit& getHead();
 	void push(SyntaxUnit*);
-//
-//	void bypassLexicTree(LexicalUnit* head);
-//	void consumeLexicTree(AbstractLexicTree* alt);
-//	void printLexicRow(vector<LexicalUnit*>& lexicrow);
-//private:
-//	void determineCategory(vector<LexicalUnit*>& lexicrow);
-//	void adjustTypes(vector<LexicalUnit*>& lexicrow);
-//	
+	void pop();
+
+	void print();
+
 private:
+	void treePrint(SyntaxUnit*);
+
 	SyntaxUnit head;
 	vector<vector<SyntaxUnit*>*> stack;
 };
@@ -51,27 +61,33 @@ public:
 class CompoundStatement : public SyntaxUnit
 {
 public:
-	CompoundStatement() { name = L"CompoundStatement"; }
+	CompoundStatement(size_t _stringnumber) : stringnumber(_stringnumber) { name = L"CompoundStatement"; }
+	void print() override;
+private:
+	size_t stringnumber;
 };
 
 class OperatorReference : public SyntaxUnit
 {
 public:
-	OperatorReference() { name = L"OperatorReference"; }
-	void setOperatorValue(Operator* op);
+	OperatorReference() { name = L"OperatorRef"; }
+
+	void print() override;
+
+	void setOperator(BasicAbstractOperator* op);
+	BasicAbstractOperator* getOperator();
 private:
-	Operator* op;
+	BasicAbstractOperator* op;
 };
 
 class VariableDeclReference : public SyntaxUnit
 {
 public:
-	VariableDeclReference()
-	{ 
-		name = L"VarRef";
-	};
+	VariableDeclReference() { name = L"VarRef"; };
+	void print() override;
 
 	void setVariable(Variable* var);
+	Variable* getVariable();
 
 private:
 	Variable* var;
@@ -86,6 +102,8 @@ public:
 	};
 
 	void setFunction(Function* f);
+	Function* getFunction();
+	void print() override;
 
 private:
 	Function* function;
@@ -100,10 +118,14 @@ public:
 	};
 
 	void setFunction(Function* f);
+	Function* getFunction();
+
+	void print() override;
 
 private:
 	Function* function;
 };
+
 
 
 class ConstantDeclReference : public SyntaxUnit
@@ -113,10 +135,10 @@ public:
 	{
 		name = L"ConstantRef";
 	};
+	void print() override;
 
-	void setConstant(wstring constant);
 	void setType(BasicAbstractType* t);
+	BasicAbstractType* getType();
 private:
-	wstring constant;
 	BasicAbstractType* constantType;
 };

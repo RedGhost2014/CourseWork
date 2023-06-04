@@ -2,19 +2,14 @@
 
 -------------------
 
-Total Errors: 4
+Total Errors: 0
 
-1) <somecode.c>: (3): 	:(
-2) <somecode.c>: (4): 	:(
-3) <somecode.c>: (5): 	:(
-4) <somecode.c>: (10): 	Syntax Error: Additional type expected.
 
 
 -------------------
 
-Total Warnings: 1
+Total Warnings: 0
 
-1) <somecode.c>: (17): 	Qualififer "unsigned" can be over Composite Type but does nothing.
 
 
 -------------------
