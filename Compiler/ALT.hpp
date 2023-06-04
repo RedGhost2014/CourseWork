@@ -47,7 +47,7 @@ public:
 	LexicalUnit();
 	LexicalUnit(const LexicalUnit&);
 	LexicalUnit(wstring s);
-	LexicalUnit(size_t);
+	LexicalUnit(size_t currentString);
 	~LexicalUnit();
 
 	wstring getValue();

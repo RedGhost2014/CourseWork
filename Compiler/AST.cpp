@@ -1,5 +1,22 @@
 #include "AST.hpp"
 
+wstring ISignature::getSignature()
+{
+	return signature;
+}
+
+void ISignature::setSignature(wstring _signature)
+{
+	signature = _signature;
+}
+
+
+
+AbstractSyntaxTree::AbstractSyntaxTree()
+{
+	this->stack.push_back(&head.getBranch());
+}
+
 SyntaxUnit& AbstractSyntaxTree::getHead()
 {
 	return head;
@@ -10,45 +27,58 @@ void SyntaxUnit::push(SyntaxUnit* su)
 	this->branch.push_back(su);
 }
 
+void AbstractSyntaxTree::pop()
+{
+	if (stack.size() > 1)
+		stack.pop_back();
+}
+
+void AbstractSyntaxTree::print()
+{
+	treePrint(&head);
+}
+
+void AbstractSyntaxTree::treePrint(SyntaxUnit* su)
+{
+	static size_t recursionDepthLevel = 0;
+	vector<SyntaxUnit*>& v = su->getBranch();
+
+	for (size_t i = 0; i < v.size(); i++)
+	{
+		for (size_t i = 0; i < recursionDepthLevel; i++)
+		{
+			wcout << "\t";
+		}
+		v[i]->print();
+		wcout << endl;
+
+		recursionDepthLevel++;
+		treePrint(v[i]);
+		recursionDepthLevel--;
+	}
+}
+
 void AbstractSyntaxTree::push(SyntaxUnit* unit)
 {
+	stack.back()->push_back(unit);
 	if (dynamic_cast<VariableDeclReference*>(unit))
 	{
-		wcout << "Ya varDecl" << endl;
+		//wcout << "Ya varDeclRef" << endl;
 	}
-	if (dynamic_cast<CompoundStatement*>(unit))
+	else if (dynamic_cast<CompoundStatement*>(unit))
 	{
-		wcout << "Ya CompoundStmt" << endl;
-		//stack.push_back(&unit->getBranch());
-		//stack.back()->push_back(&(unit->getBranch()));
-		//head.getBranch().back()->getBranch();
+		//wcout << "Ya CompoundStmt" << endl;
+		stack.push_back(&unit->getBranch());
 	}
-	//else
-	//stack.back()->push_back(unit);
-
-	//head.getBranch().push_back(unit);
-
-
-
-
-	/*wstring element = unit->getValue();
-	su->setFilename(head->getTree().back()->getValue());
-	if (element == L"{" || element == L"[" || element == L"(")
+	else if (/*dynamic_cast<FunctionCallReference*>(unit) ||*/ dynamic_cast<FunctionDeclReference*>(unit))
 	{
-		stack.back()->push_back(su);
-		stack.push_back(&su->getTree());
+		stack.push_back(&unit->getBranch());
 	}
-	else if (element == L"}" || element == L"]" || element == L")")
-	{
-		if (stack.size() > 1)
-			stack.pop_back();
+}
 
-		stack.back()->push_back(su);
-	}
-	else
-	{
-		stack.back()->push_back(su);
-	}*/
+void CompoundStatement::print()
+{
+	wcout << name << L"<" << stringnumber << L">";
 }
 
 vector<SyntaxUnit*>& SyntaxUnit::getBranch()
@@ -67,17 +97,81 @@ void FunctionDeclReference::setFunction(Function* f)
 	function = f;
 }
 
+Function* FunctionDeclReference::getFunction()
+{
+	return function;
+}
+
 void FunctionCallReference::setFunction(Function* f)
 {
 	function = f;
 }
 
-void ConstantDeclReference::setConstant(wstring _constant)
+Function* FunctionCallReference::getFunction()
 {
-	constant = _constant;
+	return function;
 }
 
 void ConstantDeclReference::setType(BasicAbstractType* t)
 {
 	constantType = t;
+}
+
+BasicAbstractType* ConstantDeclReference::getType()
+{
+	return constantType;
+}
+
+void OperatorReference::setOperator(BasicAbstractOperator* _op)
+{
+	op = _op;
+
+	if (dynamic_cast<BinaryOperator*>(_op))
+	{
+		name = L"BinaryOperatorRef";
+	}
+	else if (dynamic_cast<UnaryOperator*>(_op))
+	{
+		name = L"UnaryOperatorRef";
+	}
+	else
+	{
+		name = L"UnresolvedOperatorRef";
+	}
+}
+
+BasicAbstractOperator* OperatorReference::getOperator()
+{
+	return op;
+}
+
+void OperatorReference::print()
+{
+	wcout << name << L"(" << signature << L")";
+}
+
+void VariableDeclReference::print()
+{
+	wcout << name << L"(" << signature << L")";
+}
+
+Variable* VariableDeclReference::getVariable()
+{
+	return var;
+}
+
+
+void FunctionDeclReference::print()
+{
+	wcout << name << L"(" << signature << L")";
+}
+
+void FunctionCallReference::print()
+{
+	wcout << name << L"(" << signature << L")";
+}
+
+void ConstantDeclReference::print()
+{
+	wcout << name << L"(" << signature << L")";
 }

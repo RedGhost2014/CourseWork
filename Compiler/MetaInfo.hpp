@@ -20,12 +20,18 @@ public:
 	vector<wstring>& getSynonims();
 
 	size_t getSize();
+	size_t getCountOfPointers();
+	bool isStatic();
+	bool isConst();
+	bool isRef();
+	bool isVolatile();
+
 	void setSize(size_t _size);
 
 	void setIsStatic(bool);
 	void setIsConst(bool);
 	void setIsRef(bool);
-	void setIsCountOfPtrs(size_t);
+	void setCountOfPtrs(size_t);
 	void setIsVolatile(bool);
 
 protected:
@@ -76,7 +82,7 @@ public:
 	void setIsDefined(bool);
 
 	CompositeType* clone() override;
-	vector<Variable*>* getInternal();
+	vector<Variable*>*& getInternal();
 
 private:
 	bool m_isDefined;
@@ -91,7 +97,7 @@ class Variable : public IName
 {
 public:
 	Variable() = default;
-	~Variable() = default;
+	~Variable() {};
 
 	Variable(const Variable& rhs);
 
@@ -103,16 +109,56 @@ private:
 };
 
 
-class Operator
+class BasicAbstractOperator : public IName
 {
 public:
-	Operator() = default;
-	~Operator() = default;
+	virtual ~BasicAbstractOperator() = default;
+	size_t getPrecedence();
+	bool isCanBeOverloaded();
+	bool isBuiltIn();
+	int getAssociativity();
+	void setAssociativity(int);
 
-private:
+protected:
+	size_t precedence;
+	bool canBeOverloaded;
+	bool _isBuiltIn;
 
+	// 1 - left-to-right
+	// -1 - right-to-left
+	int associativity;
 };
 
+class UnaryOperator : public BasicAbstractOperator
+{
+public:
+	UnaryOperator(wstring op, size_t _precedence, int _associativity, bool canBeOverloaded, bool isBuiltIn);
+	~UnaryOperator() = default;
+
+	BasicAbstractType* getType();
+	void setType(BasicAbstractType* t);
+
+private:
+	BasicAbstractType* type;
+};
+
+class BinaryOperator : public BasicAbstractOperator
+{
+public:
+	BinaryOperator(wstring op, size_t _precedence, int _associativity, bool canBeOverloaded, bool isBuiltIn);
+	~BinaryOperator() = default;
+
+	BasicAbstractType* getLeftType();
+	BasicAbstractType* getRightType();
+
+	void setLeftType(BasicAbstractType* t);
+	void setRightType(BasicAbstractType* t);
+
+private:
+	BasicAbstractType* leftType;
+	BasicAbstractType* rightType;
+
+};
 
 class Function : public IName
 {
@@ -146,19 +192,21 @@ public:
 	AbstractScopeMetaInformation(AbstractScopeMetaInformation&&) = default;
 	virtual ~AbstractScopeMetaInformation() = default;
 
-	// IPush
 	virtual void pushFunction(Function*) {};
 	virtual void pushVariable(Variable*) {};
 	virtual void pushType(BasicAbstractType*) {};
+	virtual void pushOperator(BasicAbstractOperator*) {};
 
 	vector<BasicAbstractType*>& getExistedTypes();
 	vector<Variable*>& getExistedVariables();
 	vector<Function*>& getExistedFunctions();
+	vector<BasicAbstractOperator*>& getExistedOperators();
 
 protected:
 	vector<BasicAbstractType*> existedTypes;
 	vector<Variable*> existedVariables;
 	vector<Function*> existedFunctions;
+	vector<BasicAbstractOperator*> existedOperators;
 };
 
 class ClassScopeMetaInformation : public AbstractScopeMetaInformation
@@ -172,6 +220,7 @@ public:
 	void pushFunction(Function*) override;
 	void pushVariable(Variable*) override;
 	void pushType(BasicAbstractType*) override;
+	void pushOperator(BasicAbstractOperator*) override;
 };
 
 class GlobalScopeMetaInformation : public AbstractScopeMetaInformation
@@ -183,6 +232,7 @@ public:
 	void pushFunction(Function*) override;
 	void pushVariable(Variable*) override;
 	void pushType(BasicAbstractType*) override;
+	void pushOperator(BasicAbstractOperator*) override;
 
 };
 
@@ -200,6 +250,7 @@ public:
 	void pushFunction(Function*) override;
 	void pushVariable(Variable*) override;
 	void pushType(BasicAbstractType*) override;
+	void pushOperator(BasicAbstractOperator*) override;
 };
 
 class TempScopeMetaInformation : public AbstractScopeMetaInformation
@@ -211,6 +262,7 @@ public:
 	void pushFunction(Function*) override;
 	void pushVariable(Variable*) override;
 	void pushType(BasicAbstractType*) override;
+	void pushOperator(BasicAbstractOperator*) override;
 };
 
 
@@ -219,7 +271,7 @@ class MetaInformaton
 public:
 	MetaInformaton();
 	~MetaInformaton() = default;
-
+	
 	void pushScope(AbstractScopeMetaInformation*);
 	void popScope();
 	AbstractScopeMetaInformation* back();
@@ -228,8 +280,18 @@ public:
 	BasicAbstractType* getTypeByName(wstring name);
 	Function* getFunctionByName(wstring name);
 
+	BasicAbstractOperator* getBinaryOperatorByName(wstring name);
+	BasicAbstractOperator* getUnaryOperatorByName(wstring name);
+	BasicAbstractOperator* getUnaryOperatorByNameWithAssociativity(wstring name,  int _accos);
+
+	//BasicAbstractOperator* getOperatorByNameAndType(wstring name, const BasicAbstractType* leftType, const BasicAbstractType* rightType);
+	//BasicAbstractOperator* getOperatorByNameAndType(wstring name, const BasicAbstractType* type);
+	//BasicAbstractOperator* getOperatorByNameAndTypeWithAssociativity(wstring name, const BasicAbstractType* type, int _accos);
+
 	vector<AbstractScopeMetaInformation*>& getMetaStack();
 private:
+
+	bool isPrimitiveType(BasicAbstractType* t);
 	vector<AbstractScopeMetaInformation*> metaStack;
 };
 

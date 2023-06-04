@@ -140,10 +140,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="File.hpp" />
+    <ClInclude Include="Preprocessor.hpp" />
     <ClInclude Include="IName.hpp" />
     <ClInclude Include="Log.hpp" />
     <ClInclude Include="AST.hpp" />
     <ClInclude Include="MetaInfo.hpp" />
+    <ClInclude Include="RPNCreator.hpp" />
     <ClInclude Include="Settings.hpp" />
     <ClInclude Include="ALT.hpp" />
     <ClInclude Include="Tokenizer.hpp" />
@@ -155,6 +157,8 @@
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MetaInfo.cpp" />
+    <ClCompile Include="Preprocessor.cpp" />
+    <ClCompile Include="RPNCreator.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="ALT.cpp" />
     <ClCompile Include="SyntaxAnalyzer.cpp" />

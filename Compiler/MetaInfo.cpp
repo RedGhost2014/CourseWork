@@ -17,12 +17,12 @@ void IName::setName(wstring _name)
 
 
 
-void BasicAbstractType::setIsCountOfPtrs(size_t count)
+void BasicAbstractType::setCountOfPtrs(size_t count)
 {
 	countOfPtrs = count;
 }
 
-void BasicAbstractType::setIsStatic(bool condition) 
+void BasicAbstractType::setIsStatic(bool condition)
 {
 	m_isStatic = condition;
 }
@@ -41,14 +41,19 @@ void BasicAbstractType::setIsVolatile(bool condition)
 	m_isVolatile = condition;
 }
 
-size_t BasicAbstractType::getSize()
-{
-	return size;
-};
-
 void BasicAbstractType::setSize(size_t _size)
 {
 	size = _size;
+}
+
+size_t BasicAbstractType::getSize()
+{
+	return size;
+}
+
+size_t BasicAbstractType::getCountOfPointers()
+{
+	return countOfPtrs;
 }
 
 vector<wstring>& BasicAbstractType::getSynonims()
@@ -56,12 +61,10 @@ vector<wstring>& BasicAbstractType::getSynonims()
 	return synonyms;
 }
 
-//BasicAbstractType* BasicAbstractType::clone()
-//{
-//	return new BasicAbstractType(*this);
-//}
-
-
+bool BasicAbstractType::isStatic() { return m_isStatic; };
+bool BasicAbstractType::isConst() { return m_isConst; };
+bool BasicAbstractType::isRef() { return m_isRef; };
+bool BasicAbstractType::isVolatile() { return m_isVolatile; }
 
 
 
@@ -224,6 +227,7 @@ CompositeType::CompositeType(const CompositeType& rhs)
 	m_isVolatile = rhs.m_isVolatile;
 	m_isStatic = rhs.m_isStatic;
 	m_isRef = rhs.m_isRef;
+	m_isDefined = rhs.m_isDefined;
 
 	countOfPtrs = rhs.countOfPtrs;
 
@@ -249,6 +253,7 @@ CompositeType::CompositeType(const CompositeType& rhs)
 	for (size_t i = 0; i < rhsv->size(); i++)
 	{
 		internalTypes->push_back(new Variable(*(rhsv[0][i])));
+		//internalTypes->push_back((rhsv[0][i]));
 	}
 }
 
@@ -263,6 +268,8 @@ CompositeType& CompositeType::operator=(const CompositeType& rhs)
 	m_isVolatile = rhs.m_isVolatile;
 	m_isStatic = rhs.m_isStatic;
 	m_isRef = rhs.m_isRef;
+
+	m_isDefined = rhs.m_isDefined;
 
 	countOfPtrs = rhs.countOfPtrs;
 
@@ -303,7 +310,7 @@ void CompositeType::setIsDefined(bool condition)
 	m_isDefined = condition;
 }
 
-vector<Variable*>* CompositeType::getInternal()
+vector<Variable*>*& CompositeType::getInternal()
 {
 	return internalTypes;
 }
@@ -334,6 +341,7 @@ Variable::Variable(const Variable& rhs)
 {
 	PrimitiveType* primitive = dynamic_cast<PrimitiveType*>(rhs.type);
 	CompositeType* composite = dynamic_cast<CompositeType*>(rhs.type);
+	name = rhs.name;
 	if (type != nullptr)
 	{
 		delete type;
@@ -341,11 +349,13 @@ Variable::Variable(const Variable& rhs)
 
 	if (primitive)
 	{
-		type = new PrimitiveType(*primitive);
+		type = primitive;
+		//type = new PrimitiveType(*primitive);
 	}
 	else if (composite)
 	{
-		type = new CompositeType(*composite);
+		type = composite;
+		//type = new CompositeType(*composite);
 	}
 }
 
@@ -396,78 +406,96 @@ void Function::setStackSize(size_t newsize)
 
 
 
+int BasicAbstractOperator::getAssociativity()
+{
+	return associativity;
+}
+
+size_t BasicAbstractOperator::getPrecedence()
+{
+	return precedence;
+}
+
+void BasicAbstractOperator::setAssociativity(int _associativity)
+{
+	associativity = _associativity;
+}
+
+bool BasicAbstractOperator::isBuiltIn()
+{
+	return _isBuiltIn;
+}
+
+bool BasicAbstractOperator::isCanBeOverloaded()
+{
+	return canBeOverloaded;
+}
 
 
+UnaryOperator::UnaryOperator(wstring op, size_t _precedence, int _associativity, bool _canBeOverloaded, bool isBuiltIn)
+{
+	name = op;
+	precedence = _precedence;
+
+	canBeOverloaded = _canBeOverloaded;
+	associativity = _associativity;
+	_isBuiltIn = isBuiltIn;
+
+	type = nullptr;
+}
+
+BasicAbstractType* UnaryOperator::getType()
+{
+	return type;
+}
+
+void UnaryOperator::setType(BasicAbstractType* t)
+{
+	type = t;
+}
 
 
+BinaryOperator::BinaryOperator(wstring op, size_t _precedence, int _associativity, bool _canBeOverloaded, bool isBuiltIn)
+{
+	name = op;
+	precedence = _precedence;
 
+	canBeOverloaded = _canBeOverloaded;
+	associativity = _associativity;
+	_isBuiltIn = isBuiltIn;
 
+	leftType = nullptr;
+	rightType = nullptr;
+}
 
+BasicAbstractType* BinaryOperator::getLeftType()
+{
+	return leftType;
+}
 
+BasicAbstractType* BinaryOperator::getRightType()
+{
+	return rightType;
+}
 
+void BinaryOperator::setLeftType(BasicAbstractType* t)
+{
+	leftType = t;
+}
 
-
-
-
-
-
+void BinaryOperator::setRightType(BasicAbstractType* t)
+{
+	rightType = t;
+}
 
 
 
 AbstractScopeMetaInformation::AbstractScopeMetaInformation() {}
 
 vector<BasicAbstractType*>& AbstractScopeMetaInformation::getExistedTypes() { return existedTypes; };
-vector<Variable*>& AbstractScopeMetaInformation::getExistedVariables() { return existedVariables;  };
+vector<Variable*>& AbstractScopeMetaInformation::getExistedVariables() { return existedVariables; };
 vector<Function*>& AbstractScopeMetaInformation::getExistedFunctions() { return existedFunctions; };
-
-//void ScopeMetaInformation::printDefinedTypes()
-//{
-//	wcout << L"Defined Types:" << endl;
-//	for (size_t i = 0; i < definedTypes.size(); i++)
-//	{
-//		wcout << L"Type[" << i << L"] = (" << definedTypes[i].getName() << ", " << definedTypes[i].getSize() << L")" << endl;
-//	}
-//}
-//
-//void ScopeMetaInformation::printDeclaredTypes()
-//{
-//	wcout << L"Declared Types: " << declaredTypes.size() << endl;
-//	for (size_t i = 0; i < declaredTypes.size(); i++)
-//	{
-//		wcout << L"Type[" << i << L"] = (" << declaredTypes[i].getName() << ", " << declaredTypes[i].getSize() << L")" << endl;
-//	}
-//}
-
-//
-//bool ScopeMetaInformation::isTypeExist(wstring _typename)
-//{
-//	for (Type& v : declaredTypes)
-//	{
-//		if (v.getName() == _typename)
-//			return true;
-//	}
-//
-//	for (Type& v : definedTypes)
-//	{
-//		if (v.getName() == _typename)
-//			return true;
-//	}
-//
-//	return false;
-//}
-//
-//
-//bool MetaInformaton::isTypeExist(wstring _typename)
-//{
-//	for (ScopeMetaInformation& v : metaStack)
-//	{
-//		if (v.isTypeExist(_typename))
-//		{
-//			return true;
-//		}
-//	}
-//	return false;
-//}
+vector<BasicAbstractOperator*>& AbstractScopeMetaInformation::getExistedOperators() { return existedOperators; };
 
 void GlobalScopeMetaInformation::pushFunction(Function* f)
 {
@@ -484,20 +512,26 @@ void GlobalScopeMetaInformation::pushVariable(Variable* v)
 	existedVariables.push_back(v);
 }
 
+void GlobalScopeMetaInformation::pushOperator(BasicAbstractOperator* op)
+{
+	existedOperators.push_back(op);
+}
+
+
 
 
 
 ClassScopeMetaInformation::ClassScopeMetaInformation(LexicalUnit* lu) : start(lu) {}
-ClassScopeMetaInformation::~ClassScopeMetaInformation() 
+ClassScopeMetaInformation::~ClassScopeMetaInformation()
 {
-	BasicAbstractType* currentT = MetaInfo.getTypeByName(start->getValue());
+	BasicAbstractType* currentType = MetaInfo.getTypeByName(start->getValue());
 
-	CompositeType* ct = dynamic_cast<CompositeType*>(currentT);
+	CompositeType* currentCompositeType = dynamic_cast<CompositeType*>(currentType);
 
-	if (ct == nullptr)
+	if (currentCompositeType == nullptr)
 		return;
 
-	vector<Variable*>* intertnaltypes = ct->getInternal();
+	vector<Variable*>*& intertnaltypes = currentCompositeType->getInternal();
 
 	if (intertnaltypes == nullptr)
 	{
@@ -507,10 +541,28 @@ ClassScopeMetaInformation::~ClassScopeMetaInformation()
 	size_t resultSize = 0;
 	for (size_t i = 0; i < existedVariables.size(); i++)
 	{
+		BasicAbstractType* currentVType = existedVariables[i]->getType();
+
+		if (currentVType->getName() == currentCompositeType->getName())
+		{
+			if (currentVType->getCountOfPointers() == 0)
+			{
+				Log::pushError(L"Composite type can't contain themselves.", start);
+			}
+			else
+			{
+				resultSize += currentVType->getSize();
+				delete currentVType;
+				existedVariables[i]->setType(currentCompositeType);
+			}
+		}
+		else
+		{
+			resultSize += existedVariables[i]->getType()->getSize();
+		}
 		intertnaltypes->push_back(existedVariables[i]);
-		resultSize += existedVariables[i]->getType()->getSize();
 	}
-	currentT->setSize(resultSize);
+	currentCompositeType->setSize(resultSize);
 }
 
 
@@ -530,6 +582,11 @@ void ClassScopeMetaInformation::pushVariable(Variable* v)
 	existedVariables.push_back(v);
 }
 
+void ClassScopeMetaInformation::pushOperator(BasicAbstractOperator* op)
+{
+	existedOperators.push_back(op);
+}
+
 
 
 
@@ -544,6 +601,7 @@ FunctionScopeMetaInformation::~FunctionScopeMetaInformation()
 		resultSize += var->getType()->getSize();
 	}
 	basicFunction->setStackSize(resultSize);
+
 }
 
 Function* FunctionScopeMetaInformation::getBasicFunction() { return basicFunction; }
@@ -564,7 +622,10 @@ void FunctionScopeMetaInformation::pushVariable(Variable* v)
 	existedVariables.push_back(v);
 }
 
-
+void FunctionScopeMetaInformation::pushOperator(BasicAbstractOperator* op)
+{
+	existedOperators.push_back(op);
+}
 
 
 
@@ -650,9 +711,150 @@ Function* MetaInformaton::getFunctionByName(wstring name)
 	return result;
 }
 
+BasicAbstractOperator* MetaInformaton::getBinaryOperatorByName(wstring name)
+{
+	BasicAbstractOperator* result = nullptr;
+
+	for (AbstractScopeMetaInformation* meta : metaStack)
+	{
+		vector<BasicAbstractOperator*>& operators = meta->getExistedOperators();
+		for (size_t i = 0; i < operators.size(); i++)
+		{
+			BinaryOperator* concreteBinaryOp = dynamic_cast<BinaryOperator*>(operators[i]);
+
+			if (concreteBinaryOp && concreteBinaryOp->getName() == name)
+			{
+				result = operators[i];
+				return result;
+			}
+		}
+	}
+	return result;
+}
+
+
+BasicAbstractOperator* MetaInformaton::getUnaryOperatorByName(wstring name)
+{
+	BasicAbstractOperator* result = nullptr;
+
+	for (AbstractScopeMetaInformation* meta : metaStack)
+	{
+		vector<BasicAbstractOperator*>& operators = meta->getExistedOperators();
+		for (size_t i = 0; i < operators.size(); i++)
+		{
+			UnaryOperator* concreteUnaryOp = dynamic_cast<UnaryOperator*>(operators[i]);
+
+			if (concreteUnaryOp && concreteUnaryOp->getName() == name)
+			{
+				result = operators[i];
+				return result;
+			}
+		}
+	}
+	return result;
+}
+
+
+BasicAbstractOperator* MetaInformaton::getUnaryOperatorByNameWithAssociativity(wstring name, int _assoc)
+{
+	BasicAbstractOperator* result = nullptr;
+
+	for (AbstractScopeMetaInformation* meta : metaStack)
+	{
+		vector<BasicAbstractOperator*>& operators = meta->getExistedOperators();
+		for (size_t i = 0; i < operators.size(); i++)
+		{
+			UnaryOperator* concreteUnaryOp = dynamic_cast<UnaryOperator*>(operators[i]);
+
+			if (concreteUnaryOp && concreteUnaryOp->getName() == name && concreteUnaryOp->getAssociativity() == _assoc)
+			{
+				result = operators[i];
+				return result;
+			}
+		}
+	}
+	return result;
+}
+
+//BasicAbstractOperator* MetaInformaton::getOperatorByNameAndType(wstring name, const BasicAbstractType* leftType, const BasicAbstractType* rightType)
+//{
+//	BasicAbstractOperator* result = nullptr;
+//
+//	for (AbstractScopeMetaInformation* meta : metaStack)
+//	{
+//		vector<BasicAbstractOperator*>& operators = meta->getExistedOperators();
+//		for (size_t i = 0; i < operators.size(); i++)
+//		{
+//			BinaryOperator* concreteBinaryOp = dynamic_cast<BinaryOperator*>(operators[i]);
+//
+//			if (concreteBinaryOp && concreteBinaryOp->getName() == name)
+//			{
+//				if ((isPrimitiveType((BasicAbstractType*)leftType) || concreteBinaryOp->getLeftType() == leftType)
+//					&& (isPrimitiveType((BasicAbstractType*)rightType) || concreteBinaryOp->getRightType() == rightType))
+//				{
+//					result = operators[i];
+//					return result;
+//				}
+//			}
+//		}
+//	}
+//	return result;
+//}
+//
+//BasicAbstractOperator* MetaInformaton::getOperatorByNameAndType(wstring name, const BasicAbstractType* type)
+//{
+//	BasicAbstractOperator* result = nullptr;
+//
+//	for (AbstractScopeMetaInformation* meta : metaStack)
+//	{
+//		vector<BasicAbstractOperator*>& operators = meta->getExistedOperators();
+//		for (size_t i = 0; i < operators.size(); i++)
+//		{
+//			UnaryOperator* concreteUnaryOp = dynamic_cast<UnaryOperator*>(operators[i]);
+//
+//			if (concreteUnaryOp && concreteUnaryOp->getName() == name)
+//			{
+//				// TODO: Вероятно лажа и нужно переделать на конкретное сравнение.
+//				if (isPrimitiveType((BasicAbstractType*)type) || concreteUnaryOp->getType() == type)
+//				{
+//					result = operators[i];
+//					return result;
+//				}
+//			}
+//		}
+//	}
+//	return result;
+//}
+//
+//
+//BasicAbstractOperator* MetaInformaton::getOperatorByNameAndTypeWithAssociativity(wstring name, const BasicAbstractType* type, int _assoc)
+//{
+//	BasicAbstractOperator* result = nullptr;
+//
+//	for (AbstractScopeMetaInformation* meta : metaStack)
+//	{
+//		vector<BasicAbstractOperator*>& operators = meta->getExistedOperators();
+//		for (size_t i = 0; i < operators.size(); i++)
+//		{
+//			UnaryOperator* concreteUnaryOp = dynamic_cast<UnaryOperator*>(operators[i]);
+//
+//			if (concreteUnaryOp && concreteUnaryOp->getName() == name && concreteUnaryOp->getAssociativity() == _assoc)
+//			{
+//				// TODO: Вероятно лажа и нужно переделать на конкретное сравнение.
+//				if (isPrimitiveType((BasicAbstractType*)type) || concreteUnaryOp->getType() == type)
+//				{
+//					result = operators[i];
+//					return result;
+//				}
+//			}
+//		}
+//	}
+//	return result;
+//}
+
 Variable* MetaInformaton::getVariableByName(wstring name)
 {
-	for (size_t scopeindex = metaStack.size() - 1; scopeindex > 0; scopeindex--)
+	for (int scopeindex = metaStack.size() - 1; scopeindex >= 0; scopeindex--)
 	{
 		AbstractScopeMetaInformation* currentscope = metaStack[scopeindex];
 		vector<Variable*>& vars = currentscope->getExistedVariables();
@@ -661,7 +863,7 @@ Variable* MetaInformaton::getVariableByName(wstring name)
 			if (vars[i]->getName() == name)
 			{
 				return vars[i];
-			}	
+			}
 		}
 
 		FunctionScopeMetaInformation* functionScope = dynamic_cast<FunctionScopeMetaInformation*>(currentscope);
@@ -681,6 +883,10 @@ Variable* MetaInformaton::getVariableByName(wstring name)
 	return nullptr;
 }
 
+bool MetaInformaton::isPrimitiveType(BasicAbstractType* t)
+{
+	return dynamic_cast<PrimitiveType*>(t);
+}
 
 MetaInformaton::MetaInformaton()
 {
@@ -693,6 +899,79 @@ MetaInformaton::MetaInformaton()
 	toplevel->pushType(new PrimitiveType(L"float", 4));
 	toplevel->pushType(new PrimitiveType(L"double", 4));
 	toplevel->pushType(new PrimitiveType(L"long", 8));
+
+
+	int leftAssociativity = 1;
+	int rightAssociativity = -1;
+
+	// https://en.cppreference.com/w/cpp/language/operator_precedence
+
+	// Scope Resolution
+	toplevel->pushOperator(new UnaryOperator(L"::", 1, leftAssociativity, false, true));
+
+	// Member Access
+	toplevel->pushOperator(new BinaryOperator(L".", 2, leftAssociativity, false, true));
+	toplevel->pushOperator(new BinaryOperator(L"->", 2, leftAssociativity, false, true));
+
+	// Postfix Increment/Decrement
+
+	// Test pseudo Operator
+	//toplevel->pushOperator(new UnaryOperator(L"?", 2, leftAssociativity, true, true));
+
+	toplevel->pushOperator(new UnaryOperator(L"++", 2, leftAssociativity, true, true));
+	toplevel->pushOperator(new UnaryOperator(L"--", 2, leftAssociativity, true, true));
+
+	// Prefix Increment/Decrement
+	toplevel->pushOperator(new UnaryOperator(L"++", 3, rightAssociativity, true, true));
+	toplevel->pushOperator(new UnaryOperator(L"--", 3, rightAssociativity, true, true));
+
+	toplevel->pushOperator(new UnaryOperator(L"+", 3, rightAssociativity, true, true));
+	toplevel->pushOperator(new UnaryOperator(L"-", 3, rightAssociativity, true, true));
+	toplevel->pushOperator(new UnaryOperator(L"!", 3, rightAssociativity, true, true));
+	toplevel->pushOperator(new UnaryOperator(L"~", 3, rightAssociativity, true, true));
+
+	toplevel->pushOperator(new UnaryOperator(L"*", 3, rightAssociativity, false, true));
+	toplevel->pushOperator(new UnaryOperator(L"&", 3, rightAssociativity, false, true));
+	toplevel->pushOperator(new UnaryOperator(L"sizeof", 3, rightAssociativity, false, true));
+
+	toplevel->pushOperator(new BinaryOperator(L"*", 5, leftAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L"/", 5, leftAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L"%", 5, leftAssociativity, true, true));
+
+	toplevel->pushOperator(new BinaryOperator(L"+", 6, leftAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L"-", 6, leftAssociativity, true, true));
+
+	toplevel->pushOperator(new BinaryOperator(L"<<", 7, leftAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L">>", 7, leftAssociativity, true, true));
+
+	toplevel->pushOperator(new BinaryOperator(L"<", 9, leftAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L"<=", 9, leftAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L">", 9, leftAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L">=", 9, leftAssociativity, true, true));
+
+	toplevel->pushOperator(new BinaryOperator(L"==", 10, leftAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L"!=", 10, leftAssociativity, true, true));
+
+	toplevel->pushOperator(new BinaryOperator(L"&", 11, leftAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L"^", 12, leftAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L"|", 13, leftAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L"&&", 14, leftAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L"||", 15, leftAssociativity, true, true));
+
+	toplevel->pushOperator(new BinaryOperator(L"+=", 16, rightAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L"-=", 16, rightAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L"*=", 16, rightAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L"/=", 16, rightAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L"%=", 16, rightAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L"<<=", 16, rightAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L">>=", 16, rightAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L"&=", 16, rightAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L"^=", 16, rightAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L"|=", 16, rightAssociativity, true, true));
+	toplevel->pushOperator(new BinaryOperator(L"=", 16, rightAssociativity, true, true));
+
+	toplevel->pushOperator(new BinaryOperator(L",", 17, leftAssociativity, false, true));
+
 
 	this->pushScope(toplevel);
 }

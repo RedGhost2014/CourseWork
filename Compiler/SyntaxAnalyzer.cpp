@@ -1,5 +1,6 @@
 #include "SyntaxAnalyzer.hpp"
 #include "AST.hpp"
+#include "RPNCreator.hpp"
 
 SyntaxAnalyzer::SyntaxAnalyzer()
 {
@@ -67,25 +68,31 @@ void SyntaxAnalyzer::analyze(vector<LexicalUnit*>& lexicrow)
 	if (lexicrow[0]->getValue() == L"}")
 	{
 		MetaInfo.popScope();
+		tree->pop();
 		lexicrow.erase(lexicrow.begin());
 	}
 	if (lexicrow.empty() || expectValue(lexicrow[0], L";"))
 		return;
 
-	if (isDeclarator(lexicrow))
-	{
-
-	}
+	if (isDeclarator(lexicrow)) {}
 	else
 	{
 
 	}
 
 
+	bool wasSemiColumn = false;
 	for (size_t i = 0; i < lexicrow.size(); i++)
 	{
 		wstring tmp = lexicrow[i]->getValue();
-		if (tmp == L"{" /*|| tmp == L"("*/)
+
+		// more crutches to god of crutches
+		if (tmp == L";")
+		{
+			wasSemiColumn = true;
+		}
+
+		if (tmp == L"{" && !wasSemiColumn)
 		{
 			bypassLexicTree(lexicrow[i]);
 		}
@@ -113,12 +120,12 @@ bool SyntaxAnalyzer::isBelongToAlphabet(wstring literal, vector<wstring>& alphab
 
 bool SyntaxAnalyzer::expectValue(LexicalUnit* target, wstring expected)
 {
-	return target->getValue() == expected;
+	return (target->getValue() == expected);
 }
 
 bool SyntaxAnalyzer::expectKey(LexicalUnit* target, wstring expected)
 {
-	return target->getKey() == expected;
+	return (target->getKey() == expected);
 }
 
 
@@ -174,7 +181,7 @@ BasicAbstractType* SyntaxAnalyzer::retrieveType(vector<LexicalUnit*>& lexicrow, 
 		wstring key = lexicrow[i]->getKey();
 		wstring value = lexicrow[i]->getValue();
 
-		pureType = MetaInfo.getTypeByName(lexicrow[i]->getValue());
+		pureType = MetaInfo.getTypeByName(value);
 
 		if (key == L"Identifier")
 		{
@@ -222,24 +229,24 @@ BasicAbstractType* SyntaxAnalyzer::retrieveType(vector<LexicalUnit*>& lexicrow, 
 	if (dynamic_cast<PrimitiveType*>(MetaInfo.getTypeByName(pureTypeName->getValue())) && countOfUnsigned > 1)
 	{
 		countOfUnsigned = 1;
-		Log::pushWarning(L"Qualififer \"unsigned\" repeated more that 1 time.", lexicrow[0]);
+		Log::pushWarning(L"Qualifier \"unsigned\" repeated more that 1 time.", lexicrow[0]);
 	}
 	else if (dynamic_cast<CompositeType*>(MetaInfo.getTypeByName(pureTypeName->getValue())) && countOfUnsigned > 0)
 	{
 		countOfUnsigned = 0;
-		Log::pushWarning(L"Qualififer \"unsigned\" can be over Composite Type but does nothing.", lexicrow[0]);
+		Log::pushWarning(L"Qualifier \"unsigned\" can be over Composite Type but does nothing.", lexicrow[0]);
 	}
 
 
 	if (countOfConst > 1)
 	{
 		countOfConst = 1;
-		Log::pushWarning(L"Qualififer \"const\" repeated more that 1 time.", lexicrow[0]);
+		Log::pushWarning(L"Qualifier \"const\" repeated more that 1 time.", lexicrow[0]);
 	}
 	if (countOfVolatile > 1)
 	{
 		countOfVolatile = 1;
-		Log::pushWarning(L"Qualififer \"volatile\" repeated more that 1 time.", lexicrow[0]);
+		Log::pushWarning(L"Qualifier \"volatile\" repeated more that 1 time.", lexicrow[0]);
 	}
 
 	i++;
@@ -279,20 +286,23 @@ BasicAbstractType* SyntaxAnalyzer::retrieveType(vector<LexicalUnit*>& lexicrow, 
 
 	BasicAbstractType* newType = nullptr;
 	
-	if (dynamic_cast<PrimitiveType*>(MetaInfo.getTypeByName(pureTypeName->getValue())))
+	PrimitiveType* possiblePrimitive = dynamic_cast<PrimitiveType*>(MetaInfo.getTypeByName(pureTypeName->getValue()));
+	CompositeType* possibleComposite = dynamic_cast<CompositeType*>(MetaInfo.getTypeByName(pureTypeName->getValue()));
+
+	if (possiblePrimitive)
 	{
-		newType = new PrimitiveType;
+		newType = new PrimitiveType(*possiblePrimitive);
 		PrimitiveType* primitive = dynamic_cast<PrimitiveType*>(newType);
 
 		if (countOfUnsigned > 0)
 			primitive->setIsUnsigned(true);
 	}
-	else if (dynamic_cast<CompositeType*>(MetaInfo.getTypeByName(pureTypeName->getValue())))
+	else if (possibleComposite)
 	{
-		newType = new CompositeType;
+		newType = new CompositeType(*possibleComposite);
 	}
 
-	newType->setIsCountOfPtrs(countOfPtrs);
+	newType->setCountOfPtrs(countOfPtrs);
 	if (countOfPtrs > 0)
 		newType->setSize(4);
 	if (countOfConst > 0)
@@ -391,6 +401,11 @@ bool SyntaxAnalyzer::isClassDeclarator(vector<LexicalUnit*>& lexicrow)
 			wstring name = lexicrow[1]->getValue();
 			if (!MetaInfo.getTypeByName(name))
 				MetaInfo.back()->pushType(new CompositeType(name));
+
+
+
+			//leftDropTillSemi(lexicrow);
+
 			return true;
 		}
 		else
@@ -411,8 +426,14 @@ bool SyntaxAnalyzer::isVariableDeclarator(vector<LexicalUnit*>& lexicrow)
 	if (i < lexicrow.size() && expectKey(lexicrow[i], L"Identifier"))
 	{
 		size_t j = i + 1;
+
 		if (j < lexicrow.size() && (expectValue(lexicrow[j], L"(") || expectValue(lexicrow[j], L",")))
 		{
+			return false;
+		}
+		else if (j < lexicrow.size() && (!expectValue(lexicrow[j], L";") && !expectValue(lexicrow[j], L"=")))
+		{
+			Log::pushError(ErrorMessage::syntaxError + L"\';\' or \'=\' expected.", lexicrow[1]);
 			return false;
 		}
 
@@ -437,12 +458,18 @@ bool SyntaxAnalyzer::isVariableDeclarator(vector<LexicalUnit*>& lexicrow)
 				return true;
 			}
 
-			VariableDeclReference* varRef = new VariableDeclReference;
-			varRef->setVariable(var);
-			this->getTree()->push(varRef);
-
-			CompoundStatement* cs = new CompoundStatement;
+			CompoundStatement* cs = new CompoundStatement(lexicrow[j]->getLine());
 			this->getTree()->push(cs);
+
+			vector<LexicalUnit*> subsequence;
+			for (size_t i = j - 1; i < lexicrow.size(); i++)
+			{
+				subsequence.push_back(lexicrow[i]);
+			}
+			ReversePolishNotationCreator rpnc;
+			rpnc.createRPN(subsequence, this->tree);
+
+			this->tree->pop();
 		}
 
 		return true;
@@ -450,7 +477,6 @@ bool SyntaxAnalyzer::isVariableDeclarator(vector<LexicalUnit*>& lexicrow)
 
 	return false;
 }
-
 
 
 
@@ -524,6 +550,7 @@ bool SyntaxAnalyzer::isFunctionDeclarator(vector<LexicalUnit*>& lexicrow)
 						possibleSynonim->getFunctionOverloads().push_back(f);
 					else
 						MetaInfo.back()->pushFunction(f);
+					return true;
 				}
 				else if (expectValue(lexicrow[j], L"{"))
 				{
@@ -535,8 +562,13 @@ bool SyntaxAnalyzer::isFunctionDeclarator(vector<LexicalUnit*>& lexicrow)
 
 					f->setDefinitionStatus(true);
 
+					FunctionDeclReference* functiondecl = new FunctionDeclReference;
+					functiondecl->setFunction(f);
+					this->tree->push(functiondecl);
+
 					AbstractScopeMetaInformation* scope = new FunctionScopeMetaInformation(f, lexicrow[i]);
 					MetaInfo.pushScope(scope);
+					return true;
 				}
 				// TODO: Check Flag && Insert Semicolumn function
 				else if (isFixit)
@@ -583,6 +615,7 @@ bool SyntaxAnalyzer::isFunctionDeclarator(vector<LexicalUnit*>& lexicrow)
 							possibleSynonim->getFunctionOverloads().push_back(f);
 						else
 							MetaInfo.back()->pushFunction(f);
+						return true;
 					}
 					else if (expectValue(lexicrow[j], L"{"))
 					{
@@ -594,8 +627,13 @@ bool SyntaxAnalyzer::isFunctionDeclarator(vector<LexicalUnit*>& lexicrow)
 
 						f->setDefinitionStatus(true);
 
+						FunctionDeclReference* functiondecl = new FunctionDeclReference;
+						functiondecl->setFunction(f);
+						this->tree->push(functiondecl);
+
 						AbstractScopeMetaInformation* scope = new FunctionScopeMetaInformation(f, lexicrow[i]);
 						MetaInfo.pushScope(scope);
+						return true;
 					}
 					// TODO: Check Flag && Insert Semicolumn function
 					else if (isFixit)
@@ -612,9 +650,8 @@ bool SyntaxAnalyzer::isFunctionDeclarator(vector<LexicalUnit*>& lexicrow)
 			// TODO: errors
 		}
 	}
-	return true;
+	return false;
 }
-
 
 bool SyntaxAnalyzer::isDeclarator(vector<LexicalUnit*>& lexicrow)
 {
