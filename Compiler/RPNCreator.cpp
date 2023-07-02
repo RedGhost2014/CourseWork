@@ -48,8 +48,8 @@ void ReversePolishNotationCreator::determineSyntaxUnit(SyntaxUnit* currentUnit, 
 			return;
 		}
 
-		if (currentOp->getName() == L",")
-			return;
+		//if (currentOp->getName() == L",")
+		//	return;
 
 		if (!stack.empty())
 		{
@@ -136,10 +136,10 @@ void ReversePolishNotationCreator::resolveLexicSequenceIntoSyntax(vector<Lexical
 				sequenceStack.pop_back();
 
 			if (!sequenceIndexStack.empty())
+			{
 				i = sequenceIndexStack.back();
-
-			if (!sequenceIndexStack.empty())
 				sequenceIndexStack.pop_back();
+			}
 
 			if (operatorSignatureSequence != L"")
 			{
@@ -194,12 +194,12 @@ void ReversePolishNotationCreator::resolveLexicSequenceIntoSyntax(vector<Lexical
 			// Meet unary operator on start of the sequence
 			if (lastNonOp == nullptr && operatorSignatureSequence != L"")
 			{
-				OperatorReference* op = new OperatorReference();
-				op->setOperator(MetaInfo.getUnaryOperatorByName(operatorSignatureSequence));
+				//OperatorReference* op = new OperatorReference();
+				//op->setOperator(MetaInfo.getUnaryOperatorByName(operatorSignatureSequence));
 
-				result.push_back(op);
+				//result.push_back(op);
 
-				//resolveUnaryOperatorSignature(var, operatorSignatureSequence, result);
+				resolveUnaryOperatorSignature(operatorSignatureSequence, result);
 
 				operatorSignatureSequence = L"";
 			}

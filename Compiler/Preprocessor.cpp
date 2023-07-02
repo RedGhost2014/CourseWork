@@ -87,7 +87,7 @@ Preprocessor& Preprocessor::parse()
 
 		if (str.find(L"#include") != str.npos)
 		{
-
+			// TODO:
 		}
 		else if (str.find(L"#define") != str.npos)
 		{
@@ -198,11 +198,11 @@ void Preprocessor::replaceDefines(wstring& str)
 {
 	for (size_t i = 0; i < basicdefs.size(); i++)
 	{
-		size_t res = str.find(reinterpret_cast<wstring&>(basicdefs[i].first));
+		size_t res = str.find(basicdefs[i].first);
 		while (res != str.npos)
 		{
 			str.replace(res, basicdefs[i].first.length(), basicdefs[i].second);
-			res = str.find(reinterpret_cast<wstring&>(basicdefs[i].first));
+			res = str.find(basicdefs[i].first);
 		}
 	}
 

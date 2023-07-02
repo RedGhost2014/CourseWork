@@ -56,6 +56,7 @@ class TranslationUnit : public SyntaxUnit
 {
 public:
 	TranslationUnit() { name = L"TranslationUnit"; }
+	void print() override;
 };
 
 class CompoundStatement : public SyntaxUnit
@@ -66,6 +67,16 @@ public:
 private:
 	size_t stringnumber;
 };
+
+class ReturnStatement : public SyntaxUnit
+{
+public:
+	ReturnStatement(size_t _stringnumber) : stringnumber(_stringnumber) { name = L"ReturnStatement"; }
+	void print() override;
+private:
+	size_t stringnumber;
+};
+
 
 class OperatorReference : public SyntaxUnit
 {
@@ -91,6 +102,22 @@ public:
 
 private:
 	Variable* var;
+};
+
+
+class Register;
+// Used to determine temporary values after calculation via rpn
+class TempValueReference : public SyntaxUnit
+{
+	Register* usedreg;
+public:
+	TempValueReference() = default;
+	TempValueReference(Register* reg)
+	{
+		usedreg = reg;
+		name = L"TempValueReference";
+	};
+	Register* getRegister() { return usedreg; };
 };
 
 class FunctionDeclReference : public SyntaxUnit
@@ -127,7 +154,6 @@ private:
 };
 
 
-
 class ConstantDeclReference : public SyntaxUnit
 {
 public:
@@ -142,3 +168,4 @@ public:
 private:
 	BasicAbstractType* constantType;
 };
+

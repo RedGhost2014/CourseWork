@@ -151,7 +151,7 @@ void BaseLog::print(wstring filename)
 
 	wofstream& out = *output;
 
-	out << "\n\n-------------------\n\n";
+	out << "-------------------\n\n";
 
 	out << "Total Errors: " << errors.size() << "\n" << endl;
 

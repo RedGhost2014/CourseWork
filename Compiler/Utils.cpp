@@ -1,5 +1,13 @@
 #include "Utils.hpp"
 
+wstring Utils::toWstring(size_t number, int radix)
+{
+	wchar_t stacksize[40] = { 0 };
+	_itow_s(number, stacksize, 40, radix);
+	return wstring(stacksize);
+}
+
+
 std::wstring Utils::exePath()
 {
 	WCHAR buffer[MAX_PATH] = { 0 };

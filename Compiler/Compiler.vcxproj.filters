@@ -46,6 +46,12 @@
     <Filter Include="Исходные файлы\AbstractLexicTree">
       <UniqueIdentifier>{44c839e0-2a53-49c9-808b-fcf80d3ccf79}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\CodeGenerator">
+      <UniqueIdentifier>{527605d6-c7cf-488f-892e-e97ea45f4d76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Mangler">
+      <UniqueIdentifier>{6649fdfe-fa06-43d9-af4e-83cb87cc4580}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="File.hpp">
@@ -80,6 +86,12 @@
     </ClInclude>
     <ClInclude Include="RPNCreator.hpp">
       <Filter>Исходные файлы\RPNCreator</Filter>
+    </ClInclude>
+    <ClInclude Include="CodeGenerator.hpp">
+      <Filter>Исходные файлы\CodeGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="Mangler.hpp">
+      <Filter>Исходные файлы\Mangler</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -121,6 +133,15 @@
     </ClCompile>
     <ClCompile Include="RPNCreator.cpp">
       <Filter>Исходные файлы\RPNCreator</Filter>
+    </ClCompile>
+    <ClCompile Include="Flow.hpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="CodeGenerator.cpp">
+      <Filter>Исходные файлы\CodeGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="Mangler.cpp">
+      <Filter>Исходные файлы\Mangler</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

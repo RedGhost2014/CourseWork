@@ -30,14 +30,18 @@ private:
 
 	bool isBelongToAlphabet(wstring literal, vector<wstring>& alphabet);
 	bool expectValue(LexicalUnit* target, wstring expected);
+
+
 	bool expectKey(LexicalUnit* target, wstring expected);
 
 	static vector<wstring> qualifiers;
 	static vector<wstring> typequalifiers;
 
 	bool isDefinition(vector<LexicalUnit*>& lexicrow);
+
+	bool isReturnStatement(vector<LexicalUnit*>& lexicrow);
 	
-	// Declarator
+	// Declarators
 	bool isDeclarator(vector<LexicalUnit*>& lexicrow);
 	
 	bool isClassDeclarator(vector<LexicalUnit*>& lexicrow);

@@ -6,6 +6,7 @@
 
 using namespace std;
 
+// TODO: possible refactor all of it
 class Preprocessor
 {
 public:

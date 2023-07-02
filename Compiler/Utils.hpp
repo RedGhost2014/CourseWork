@@ -13,4 +13,5 @@ public:
 	static bool isFileExists(const std::wstring& str);
 	static wstring getFileExtension(const std::wstring& str);
 	static bool isExistFileExtension(const std::wstring& str);
+	static wstring toWstring(size_t number, int radix);
 };

@@ -102,6 +102,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,7 +140,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CodeGenerator.hpp" />
     <ClInclude Include="File.hpp" />
+    <ClInclude Include="Mangler.hpp" />
     <ClInclude Include="Preprocessor.hpp" />
     <ClInclude Include="IName.hpp" />
     <ClInclude Include="Log.hpp" />
@@ -153,9 +156,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AST.cpp" />
+    <ClCompile Include="CodeGenerator.cpp" />
     <ClCompile Include="File.cpp" />
+    <ClCompile Include="Flow.hpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Mangler.cpp" />
     <ClCompile Include="MetaInfo.cpp" />
     <ClCompile Include="Preprocessor.cpp" />
     <ClCompile Include="RPNCreator.cpp" />
