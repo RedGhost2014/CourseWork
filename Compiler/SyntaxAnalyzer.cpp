@@ -9,14 +9,16 @@ SyntaxAnalyzer::SyntaxAnalyzer()
 
 void SyntaxAnalyzer::addSourceFileToAST(File* f)
 {
-	SyntaxUnit* su = new SyntaxUnit;
-	su->setName(f->getName());
-	tree->getHead().getBranch().push_back(su);
+	TranslationUnit* su = new TranslationUnit;
+	su->setSignature(f->getName());
+	//tree->getHead().getBranch().push_back(su);
+	tree->push(su);
 }
 
 void SyntaxAnalyzer::consumeLexicTree(AbstractLexicTree* alt)
 {
 	bypassLexicTree(alt->getHead()->getTree()[0]);
+	tree->pop();
 }
 
 AbstractSyntaxTree* SyntaxAnalyzer::detachTree()
@@ -37,7 +39,6 @@ void SyntaxAnalyzer::bypassLexicTree(LexicalUnit* head)
 
 	vector<LexicalUnit*>& currentLexicalRow = head->getTree();
 
-
 	size_t i = 0;
 	while (i < currentLexicalRow.size())
 	{
@@ -45,8 +46,6 @@ void SyntaxAnalyzer::bypassLexicTree(LexicalUnit* head)
 		parserow.push_back(currentLexicalRow[i]);
 		if (tmp == L"{" || tmp == L";")
 		{
-			//printLexicRow(parserow);
-
 			while (!parserow.empty())
 			{
 				analyze(parserow);
@@ -57,7 +56,6 @@ void SyntaxAnalyzer::bypassLexicTree(LexicalUnit* head)
 	}
 	if (!parserow.empty())
 	{
-		//printLexicRow(parserow);
 		analyze(parserow);
 	}
 }
@@ -67,15 +65,20 @@ void SyntaxAnalyzer::analyze(vector<LexicalUnit*>& lexicrow)
 {
 	if (lexicrow[0]->getValue() == L"}")
 	{
+		AbstractScopeMetaInformation* stackback = MetaInfo.getMetaStack().back();
+
+		if (dynamic_cast<FunctionScopeMetaInformation*>(stackback))
+		{
+			tree->pop();
+		}
 		MetaInfo.popScope();
-		tree->pop();
 		lexicrow.erase(lexicrow.begin());
 	}
 	if (lexicrow.empty() || expectValue(lexicrow[0], L";"))
 		return;
 
 	if (isDeclarator(lexicrow)) {}
-	else
+	else if (isReturnStatement(lexicrow))
 	{
 
 	}
@@ -414,6 +417,8 @@ bool SyntaxAnalyzer::isClassDeclarator(vector<LexicalUnit*>& lexicrow)
 	return false;
 }
 
+
+
 bool SyntaxAnalyzer::isVariableDeclarator(vector<LexicalUnit*>& lexicrow)
 {
 	size_t i = 0;
@@ -477,11 +482,6 @@ bool SyntaxAnalyzer::isVariableDeclarator(vector<LexicalUnit*>& lexicrow)
 
 	return false;
 }
-
-
-
-
-
 
 
 
@@ -563,7 +563,9 @@ bool SyntaxAnalyzer::isFunctionDeclarator(vector<LexicalUnit*>& lexicrow)
 					f->setDefinitionStatus(true);
 
 					FunctionDeclReference* functiondecl = new FunctionDeclReference;
+					functiondecl->setSignature(f->getName());
 					functiondecl->setFunction(f);
+
 					this->tree->push(functiondecl);
 
 					AbstractScopeMetaInformation* scope = new FunctionScopeMetaInformation(f, lexicrow[i]);
@@ -628,6 +630,7 @@ bool SyntaxAnalyzer::isFunctionDeclarator(vector<LexicalUnit*>& lexicrow)
 						f->setDefinitionStatus(true);
 
 						FunctionDeclReference* functiondecl = new FunctionDeclReference;
+						functiondecl->setSignature(f->getName());
 						functiondecl->setFunction(f);
 						this->tree->push(functiondecl);
 
@@ -661,36 +664,57 @@ bool SyntaxAnalyzer::isDeclarator(vector<LexicalUnit*>& lexicrow)
 	}
 	else if (isClassDeclarator(lexicrow))
 	{
-		if (isDefinition(lexicrow))
-		{
-			wcout << L"Defined new type: " << lexicrow[1]->getValue() << endl;
-		}
-		else
-		{
-			wcout << L"Declared new type: " << lexicrow[1]->getValue() << endl;
-		}
+		//if (isDefinition(lexicrow))
+		//{
+		//	wcout << L"Defined new type: " << lexicrow[1]->getValue() << endl;
+		//}
+		//else
+		//{
+		//	wcout << L"Declared new type: " << lexicrow[1]->getValue() << endl;
+		//}
 		return true;
 	}
 	else if (isVariableDeclarator(lexicrow))
 	{
-		wcout << L"Declared new variable: ";
+		/*wcout << L"Declared new variable: ";
 		for (size_t i = 0; i < lexicrow.size(); i++)
 		{
 			wcout << lexicrow[i]->getValue() << L" ";
 		}
-		wcout << endl;
+		wcout << endl;*/
 		return true;
 	}
 	else if (isFunctionDeclarator(lexicrow))
 	{
-		wcout << L"Declared new function: ";
+		/*wcout << L"Declared new function: ";
 		for (size_t i = 0; i < lexicrow.size(); i++)
 		{
 			wcout << lexicrow[i]->getValue() << L" ";
 		}
-		wcout << endl;
+		wcout << endl;*/
 		return true;
 	}
 
+	return false;
+}
+
+bool SyntaxAnalyzer::isReturnStatement(vector<LexicalUnit*>& lexicrow)
+{
+	if (lexicrow[0]->getValue() == L"return")
+	{
+		ReturnStatement* cs = new ReturnStatement(lexicrow[0]->getLine());
+		this->getTree()->push(cs);
+
+		vector<LexicalUnit*> subsequence;
+		for (size_t i = 1; i < lexicrow.size(); i++)
+		{
+			subsequence.push_back(lexicrow[i]);
+		}
+		ReversePolishNotationCreator rpnc;
+		rpnc.createRPN(subsequence, this->tree);
+
+		this->tree->pop();
+		return true;
+	}
 	return false;
 }

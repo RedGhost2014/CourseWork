@@ -168,16 +168,21 @@ public:
 
 	vector<BasicAbstractType*>& getReturnTypes();
 	vector<Variable*>& getFunctionArguments();
+	vector<Variable*>& getFunctionStackVars();
 	vector<Function*>& getFunctionOverloads();
 
 	bool isDefined();
 	void setDefinitionStatus(bool);
 	size_t getStackSize();
 	void setStackSize(size_t newsize);
+	void setStackVariables(vector<Variable*>& _stackvars);
 
 private:
 	bool m_isDefined;
 	size_t stackSize;
+
+	vector<Variable*> functionStackVariables;
+
 	vector<Function*> functionOverloads;
 	vector<BasicAbstractType*> returnTypes;
 	vector<Variable*> functionArguments;
@@ -284,14 +289,12 @@ public:
 	BasicAbstractOperator* getUnaryOperatorByName(wstring name);
 	BasicAbstractOperator* getUnaryOperatorByNameWithAssociativity(wstring name,  int _accos);
 
-	//BasicAbstractOperator* getOperatorByNameAndType(wstring name, const BasicAbstractType* leftType, const BasicAbstractType* rightType);
-	//BasicAbstractOperator* getOperatorByNameAndType(wstring name, const BasicAbstractType* type);
-	//BasicAbstractOperator* getOperatorByNameAndTypeWithAssociativity(wstring name, const BasicAbstractType* type, int _accos);
-
 	vector<AbstractScopeMetaInformation*>& getMetaStack();
-private:
 
+	bool isPureIntegralType(BasicAbstractType* t);
 	bool isPrimitiveType(BasicAbstractType* t);
+
+private:
 	vector<AbstractScopeMetaInformation*> metaStack;
 };
 

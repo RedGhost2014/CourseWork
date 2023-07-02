@@ -15,9 +15,6 @@ private:
 	void resolveLexicSequenceIntoSyntax(vector<LexicalUnit*>& sequence, vector<SyntaxUnit*>& result);
 	void resolveBinaryOperatorSignature(wstring operatorSignatureSequence, vector<SyntaxUnit*>& result);
 	void resolveUnaryOperatorSignature(wstring operatorSignatureSequence, vector<SyntaxUnit*>& result);
-	
-	//void resolveBinaryOperatorSignature(SyntaxUnit* leftOperand, wstring operatorSignatureSequence, SyntaxUnit* rightOperand, vector<SyntaxUnit*>& result);
-	//void resolveUnaryOperatorSignature(SyntaxUnit* operand, wstring operatorSignatureSequence, vector<SyntaxUnit*>& result);
 
 	// https://en.wikipedia.org/wiki/Shunting_yard_algorithm
 	void determineSyntaxUnit(SyntaxUnit* currentUnit, vector<SyntaxUnit*>& stack, vector<SyntaxUnit*>& output);

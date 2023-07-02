@@ -10,7 +10,7 @@ Settings& Settings::parse(wchar_t* argv[], size_t argc)
 		exit(0);
 	}
 
-	vector<wstring> possibleExtensions = { L".c", L".cwp", L".i" };
+	vector<wstring> possibleExtensions = { L".c", L".i" };
 
 	filter(argv, argc);
 

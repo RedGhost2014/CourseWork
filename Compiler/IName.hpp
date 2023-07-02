@@ -2,13 +2,11 @@
 #include <iostream>
 using namespace std;
 
-// ѕрекрасно знаю что это не интерфейс а абстрактный класс,
-// но дл€ того чтобы не было путаницы между пон€ти€ми €зыкового анализа, и чтобы побесить одного человека, во всем проекте эти два пон€ти€ противоположны
-// P.S ѕривет јльберто :)
+// P.S Hi crabalbert :)
 class IName
 {
 public:
-	wstring getName();
+	wstring getName() const;
 	void setName(wstring _name);
 
 protected:

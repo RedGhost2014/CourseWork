@@ -4,7 +4,7 @@
 MetaInformaton MetaInfo;
 
 
-wstring IName::getName()
+wstring IName::getName() const
 {
 	return name;
 }
@@ -363,6 +363,13 @@ Variable::Variable(const Variable& rhs)
 
 
 
+
+
+
+
+
+
+
 Function::Function()
 {
 	m_isDefined = false;
@@ -384,6 +391,11 @@ vector<Variable*>& Function::getFunctionArguments()
 	return functionArguments;
 }
 
+vector<Variable*>& Function::getFunctionStackVars()
+{
+	return functionStackVariables;
+}
+
 bool Function::isDefined()
 {
 	return m_isDefined;
@@ -403,6 +415,16 @@ void Function::setStackSize(size_t newsize)
 {
 	stackSize = newsize;
 }
+
+void Function::setStackVariables(vector<Variable*>& _stackvars)
+{
+	functionStackVariables = _stackvars;
+}
+
+
+
+
+
 
 
 
@@ -601,7 +623,7 @@ FunctionScopeMetaInformation::~FunctionScopeMetaInformation()
 		resultSize += var->getType()->getSize();
 	}
 	basicFunction->setStackSize(resultSize);
-
+	basicFunction->setStackVariables(existedVariables);
 }
 
 Function* FunctionScopeMetaInformation::getBasicFunction() { return basicFunction; }
@@ -883,6 +905,16 @@ Variable* MetaInformaton::getVariableByName(wstring name)
 	return nullptr;
 }
 
+bool MetaInformaton::isPureIntegralType(BasicAbstractType* t)
+{
+	PrimitiveType* primitive = dynamic_cast<PrimitiveType*>(t);
+	if (primitive && primitive->getCountOfPointers() == 0)
+	{
+		return true;
+	}
+	return false;
+}
+
 bool MetaInformaton::isPrimitiveType(BasicAbstractType* t)
 {
 	return dynamic_cast<PrimitiveType*>(t);
@@ -913,11 +945,11 @@ MetaInformaton::MetaInformaton()
 	toplevel->pushOperator(new BinaryOperator(L".", 2, leftAssociativity, false, true));
 	toplevel->pushOperator(new BinaryOperator(L"->", 2, leftAssociativity, false, true));
 
-	// Postfix Increment/Decrement
 
 	// Test pseudo Operator
 	//toplevel->pushOperator(new UnaryOperator(L"?", 2, leftAssociativity, true, true));
 
+	// Postfix Increment/Decrement
 	toplevel->pushOperator(new UnaryOperator(L"++", 2, leftAssociativity, true, true));
 	toplevel->pushOperator(new UnaryOperator(L"--", 2, leftAssociativity, true, true));
 

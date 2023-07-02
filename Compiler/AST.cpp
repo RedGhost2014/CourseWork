@@ -65,20 +65,34 @@ void AbstractSyntaxTree::push(SyntaxUnit* unit)
 	{
 		//wcout << "Ya varDeclRef" << endl;
 	}
-	else if (dynamic_cast<CompoundStatement*>(unit))
+	else if (dynamic_cast<CompoundStatement*>(unit) || dynamic_cast<ReturnStatement*>(unit))
 	{
 		//wcout << "Ya CompoundStmt" << endl;
 		stack.push_back(&unit->getBranch());
 	}
-	else if (/*dynamic_cast<FunctionCallReference*>(unit) ||*/ dynamic_cast<FunctionDeclReference*>(unit))
+	else if (dynamic_cast<TranslationUnit*>(unit))
+	{
+		stack.push_back(&unit->getBranch());
+	}
+	else if (dynamic_cast<FunctionDeclReference*>(unit))
 	{
 		stack.push_back(&unit->getBranch());
 	}
 }
 
+void TranslationUnit::print()
+{
+	wcout << name << L" <" << signature << L">";
+}
+
 void CompoundStatement::print()
 {
-	wcout << name << L"<" << stringnumber << L">";
+	wcout << name << L" < Line: " << stringnumber << L" >";
+}
+
+void ReturnStatement::print()
+{
+	wcout << name << L" < Line: " << stringnumber << L" >";
 }
 
 vector<SyntaxUnit*>& SyntaxUnit::getBranch()
@@ -92,6 +106,7 @@ void VariableDeclReference::setVariable(Variable* _var)
 	var = _var;
 }
 
+
 void FunctionDeclReference::setFunction(Function* f)
 {
 	function = f;
@@ -101,6 +116,8 @@ Function* FunctionDeclReference::getFunction()
 {
 	return function;
 }
+
+
 
 void FunctionCallReference::setFunction(Function* f)
 {
